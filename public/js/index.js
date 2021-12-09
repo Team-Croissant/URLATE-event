@@ -52,7 +52,8 @@ const socketInitialize = (id) => {
       clearInterval(connectInterval);
       connection.textContent = `Player ${userId}`;
     });
-    socket.on("admin disconnected", (id) => {
+
+    socket.on("admin disconnected", () => {
       location.reload();
     });
 
@@ -65,7 +66,7 @@ const socketInitialize = (id) => {
 
 const tryConnect = () => {
   console.log("trying to connect");
-  socket.emit("handshake", userId, socketId);
+  socket.emit("handshake", userId);
 };
 
 const canvasResize = () => {
