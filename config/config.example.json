@@ -1,7 +1,6 @@
 {
   "project": {
     "url": "https://example.com",
-    "api": "https://api.example.com",
     "cdn": "https://cdn.example.com",
     "game": "https://game.example.com",
     "port": 8080

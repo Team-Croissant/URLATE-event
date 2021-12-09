@@ -1,4 +1,4 @@
-/* global api, projectUrl, lottie, bodymovin*/
+/* global game, url, lottie, bodymovin*/
 const animContainer = document.getElementById("animContainer");
 let lottieAnim;
 
