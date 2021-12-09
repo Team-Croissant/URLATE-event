@@ -1,10 +1,13 @@
 /* global game, url, lottie, bodymovin*/
 const animContainer = document.getElementById("animContainer");
+const nameContainer = document.getElementById("nameContainer");
 const connection = document.getElementById("connection");
 
 let lottieAnim;
 let socket;
-let userid;
+let userId;
+let socketId;
+let connectInterval;
 
 document.addEventListener("DOMContentLoaded", () => {
   let widthWidth = window.innerWidth;
@@ -36,17 +39,33 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 const socketInitialize = (id) => {
-  userid = id;
-  socket = io(game, {
-    query: `id=${id}`,
-  });
+  userId = id;
+  socket = io(game);
 
   socket.on("connect", () => {
-    console.log("connected");
-    // socket.on("game result", () => {
-    //   //todo
-    // });
+    socket.on("broadcast", (id) => {
+      socketId = id;
+      connectInterval = setInterval(tryConnect, 3000);
+    });
+
+    socket.on("connected", () => {
+      clearInterval(connectInterval);
+      connection.textContent = `Player ${userId}`;
+    });
+    socket.on("admin disconnected", (id) => {
+      location.reload();
+    });
+
+    socket.on("initialize", () => {
+      nameContainer.classList.add("show");
+      socket.emit("initialize recieved");
+    });
   });
+};
+
+const tryConnect = () => {
+  console.log("trying to connect");
+  socket.emit("handshake", userId, socketId);
 };
 
 const canvasResize = () => {

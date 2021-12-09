@@ -11,7 +11,7 @@
   <span id="title"><span id="titleStrong">URLATE</span> EVENT MANAGEMENT SYSTEM</span>
   <p id="listTitle">Connected List</p>
   <div id="listContainer"></div>
-  <button id="mainButton">Start</button><button id="subButton" class="hidden">Retry</button>
+  <button id="mainButton" onclick="buttonClicked()">Start</button><button id="subButton" class="hidden" onclick="subButtonClicked()">Retry</button>
   <script>
       const projectUrl = "<%= url %>";
       const game = "<%= game %>";
