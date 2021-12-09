@@ -1,0 +1,82 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css");
+@import url("metropolis.css");
+
+body {
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  font-family: "Metropolis", "Pretendard Variable", arial;
+  letter-spacing: -0.5px;
+  overflow: hidden;
+  user-select: none;
+}
+
+#animContainer {
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(30deg, #6eacfe, #b451ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+#logoContainer {
+  position: relative;
+  z-index: 1;
+  width: 100vw;
+  height: 62vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+#logo {
+  height: 30vh;
+}
+
+#footerLeft {
+  position: fixed;
+  text-align: left;
+  font-size: 1.3vh;
+  color: white;
+  left: 2vh;
+  bottom: 2vh;
+}
+
+#footerRight {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: flex-end;
+  position: fixed;
+  font-size: 1.3vh;
+  color: white;
+  right: 2vh;
+  bottom: 2vh;
+}
+
+.link {
+  color: #ffffffdd;
+}
+
+#allContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+#allImage {
+  margin-left: 0.5vw;
+  height: 6vh;
+}
+
+#connection {
+  font-size: 2vh;
+  color: white;
+}
