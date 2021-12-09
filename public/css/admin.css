@@ -54,6 +54,11 @@ button {
   color: black;
 }
 
+button:disabled {
+  cursor: default !important;
+  color: #777 !important;
+}
+
 #subButton.hidden {
   display: none;
 }
