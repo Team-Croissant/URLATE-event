@@ -24,6 +24,13 @@ app.get("/admin", (req, res) => {
   });
 });
 
+app.get("/display", (req, res) => {
+  res.render("display", {
+    url: config.project.url,
+    game: config.project.game,
+  });
+});
+
 app.listen(config.project.port, () => {
   console.log(`HTTP Server running at port ${config.project.port}.`);
 });
