@@ -17,6 +17,13 @@ app.get("/", (req, res) => {
   });
 });
 
+app.get("/admin", (req, res) => {
+  res.render("admin", {
+    url: config.project.url,
+    game: config.project.game,
+  });
+});
+
 app.listen(config.project.port, () => {
   console.log(`HTTP Server running at port ${config.project.port}.`);
 });

@@ -1,0 +1,55 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css");
+@import url("https://pvinis.github.io/iosevka-webfont/7.0.2/iosevka.css");
+@import url("metropolis.css");
+
+body {
+  margin: 0;
+  padding: 5vh;
+  font-family: "Metropolis", "Pretendard Variable", arial;
+  letter-spacing: -0.5px;
+  overflow: hidden;
+  user-select: none;
+}
+
+#title {
+  font-size: 5vh;
+  font-weight: 500;
+}
+
+#titleStrong {
+  font-weight: 800;
+}
+
+#listTitle {
+  font-size: 4vh;
+  font-weight: 600;
+}
+
+.listElement {
+  margin-top: 1vh;
+  margin-bottom: 1vh;
+  font-size: 3vh;
+  font-family: "iosevka web", "Pretendard Variable", arial;
+}
+
+button {
+  cursor: pointer;
+  margin-top: 2vh;
+  font-weight: 600;
+  border: 3px solid black;
+  font-size: 2vh;
+  border-radius: 3px;
+  font-family: "Metropolis", "Pretendard Variable", arial;
+  padding: 1vh 2vw;
+  margin-right: 1vw;
+}
+
+#mainButton {
+  background-color: #000;
+  color: white;
+}
+
+#subButton {
+  background-color: #fff;
+  color: black;
+}
