@@ -10,10 +10,13 @@
 <body>
   <span id="title"><span id="titleStrong">URLATE</span> EVENT MANAGEMENT SYSTEM</span>
   <p id="listTitle">Connected List</p>
-  <div id="listContainer">
-    <p class="listElement"><strong>Player 1</strong> - 40nfn301dnce482fb20920j1v2</p>
-  </div>
-  <button id="mainButton">Start</button><button id="subButton">Retry</button>
+  <div id="listContainer"></div>
+  <button id="mainButton">Start</button><button id="subButton" class="hidden">Retry</button>
+  <script>
+      const projectUrl = "<%= url %>";
+      const game = "<%= game %>";
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
   <script src="/js/admin.js"></script>
 </body>
 </html>

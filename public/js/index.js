@@ -1,6 +1,10 @@
 /* global game, url, lottie, bodymovin*/
 const animContainer = document.getElementById("animContainer");
+const connection = document.getElementById("connection");
+
 let lottieAnim;
+let socket;
+let userid;
 
 document.addEventListener("DOMContentLoaded", () => {
   let widthWidth = window.innerWidth;
@@ -22,7 +26,28 @@ document.addEventListener("DOMContentLoaded", () => {
     canvasResize();
   });
   lottie.setSpeed(0.5);
+  const urlSearchParams = new URLSearchParams(window.location.search);
+  const params = Object.fromEntries(urlSearchParams.entries());
+  if (!("u" in params)) {
+    connection.textContent = "ID setting is required.";
+  } else {
+    socketInitialize(params.u);
+  }
 });
+
+const socketInitialize = (id) => {
+  userid = id;
+  socket = io(game, {
+    query: `id=${id}`,
+  });
+
+  socket.on("connect", () => {
+    console.log("connected");
+    // socket.on("game result", () => {
+    //   //todo
+    // });
+  });
+};
 
 const canvasResize = () => {
   let widthWidth = window.innerWidth;

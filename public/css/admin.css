@@ -53,3 +53,7 @@ button {
   background-color: #fff;
   color: black;
 }
+
+#subButton.hidden {
+  display: none;
+}
