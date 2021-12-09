@@ -42,7 +42,7 @@ body {
 #footerLeft {
   position: fixed;
   text-align: left;
-  font-size: 1.3vh;
+  font-size: 2vh;
   color: white;
   left: 2vh;
   bottom: 2vh;
@@ -77,6 +77,7 @@ body {
 }
 
 #connection {
-  font-size: 2vh;
+  font-size: 3vh;
+  font-weight: 600;
   color: white;
 }
