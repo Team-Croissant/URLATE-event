@@ -26,6 +26,9 @@ body {
 }
 
 .listElement {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   margin-top: 1vh;
   margin-bottom: 1vh;
   font-size: 3vh;
@@ -61,4 +64,17 @@ button:disabled {
 
 #subButton.hidden {
   display: none;
+}
+
+.listOnline {
+  font-size: 2vh;
+  font-weight: 800;
+}
+
+.listOnline.online {
+  color: #21b448;
+}
+
+.listOnline.offline {
+  color: #df3b3b;
 }

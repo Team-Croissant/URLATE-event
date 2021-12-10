@@ -1,7 +1,11 @@
 /* global game, url, lottie, bodymovin*/
 const animContainer = document.getElementById("animContainer");
 const nameContainer = document.getElementById("nameContainer");
+const loadingContainer = document.getElementById("loadingContainer");
+const nameInput = document.getElementById("nameInput");
 const connection = document.getElementById("connection");
+
+const nameRegex = /^[0-9]{4} [가-힣]{2,10}$/;
 
 let lottieAnim;
 let socket;
@@ -59,7 +63,11 @@ const socketInitialize = (id) => {
 
     socket.on("initialize", () => {
       nameContainer.classList.add("show");
-      socket.emit("initialize recieved");
+      loadingContainer.classList.remove("show");
+    });
+
+    socket.on("tutorial", () => {
+      window.location.href = `${url}/tutorial`;
     });
   });
 };
@@ -67,6 +75,15 @@ const socketInitialize = (id) => {
 const tryConnect = () => {
   console.log("trying to connect");
   socket.emit("handshake", userId);
+};
+
+const nameSubmit = () => {
+  if (nameRegex.test(nameInput.value)) {
+    loadingContainer.classList.add("show");
+    socket.emit("initialized", nameInput.value);
+  } else {
+    alert(`이름은 반드시 "학번 이름(2302 강혁진)"의 형식으로 입력해주세요.`);
+  }
 };
 
 const canvasResize = () => {
