@@ -50,11 +50,21 @@ button {
 #mainButton {
   background-color: #000;
   color: white;
+  transition-duration: .3s;
 }
 
 #subButton {
   background-color: #fff;
   color: black;
+  transition-duration: .3s;
+}
+
+#mainButton:not(:disabled):hover {
+  background-color: #333;
+}
+
+#subButton:hover {
+  background-color: #ccc;
 }
 
 button:disabled {
