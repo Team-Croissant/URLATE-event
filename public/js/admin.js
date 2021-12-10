@@ -63,6 +63,7 @@ const socketInitialize = () => {
       delete users[index];
     } else {
       users[index].socketId = "";
+      users[index].loaded = false;
     }
     switch (display) {
       case 0:
