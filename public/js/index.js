@@ -49,6 +49,7 @@ const socketInitialize = (id) => {
   socket.on("connect", () => {
     socket.on("broadcast", (id) => {
       socketId = id;
+      tryConnect();
       connectInterval = setInterval(tryConnect, 3000);
     });
 
@@ -67,14 +68,14 @@ const socketInitialize = (id) => {
     });
 
     socket.on("tutorial", () => {
-      window.location.href = `${url}/tutorial`;
+      window.location.href = `${url}/tutorial?u=${userId}`;
     });
   });
 };
 
 const tryConnect = () => {
   console.log("trying to connect");
-  socket.emit("handshake", userId);
+  socket.emit("handshake", userId, 0);
 };
 
 const nameSubmit = () => {

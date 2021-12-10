@@ -14,11 +14,19 @@ const socketInitialize = () => {
     socket.emit("admin");
   });
 
-  socket.on("handshake", (id, socketId) => {
-    if (display == 0) {
-      users[id] = { socketId: socketId };
-      refreshList("socketId");
+  socket.on("handshake", (id, socketId, screen) => {
+    if (display == screen) {
       socket.emit("connected", socketId);
+      switch (display) {
+        case 0:
+          users[id] = { socketId: socketId };
+          refreshList("socketId");
+          break;
+        case 2:
+          users[id].socketId = socketId;
+          refreshList("nickname", true);
+          break;
+      }
     }
   });
 
@@ -38,10 +46,27 @@ const socketInitialize = () => {
     }
   });
 
+  socket.on("tutorial loaded", (socketId) => {
+    users[Object.keys(users).find((key) => users[key].socketId === socketId)].loaded = true;
+    refreshList("nickname", true);
+    isFinished = true;
+    for (let i = 0; i < Object.keys(users).length; i++) {
+      const target = Object.keys(users)[i];
+      if (!users[target].loaded) isFinished = false;
+    }
+    if (isFinished) buttons[0].disabled = false;
+  });
+
   socket.on("disconnected", (socketId) => {
-    if (display == 0) {
-      delete users[Object.keys(users).find((key) => users[key].socketId === socketId)];
-      refreshList("socketId");
+    delete users[Object.keys(users).find((key) => users[key].socketId === socketId)];
+    switch (display) {
+      case 0:
+        refreshList("socketId");
+        break;
+      case 1:
+      case 2:
+        refreshList("nickname", true);
+        break;
     }
   });
 };
@@ -51,8 +76,8 @@ const refreshList = (key, isOnline) => {
   for (let i = 0; i < Object.keys(users).length; i++) {
     const target = Object.keys(users)[i];
     listContainer.innerHTML += `<p class="listElement">${
-      isOnline ? `<span class="listOnline ${users[target]["socketId"] == "" ? "offline" : "online"}">● </span>` : ""
-    }<strong>Player ${target}</strong> - ${users[target][key]}</p>`;
+      isOnline ? `<span class="listOnline ${users[target]["socketId"] == "" ? "offline" : users[target]["loaded"] ? "online" : "loading"}">● </span>` : ""
+    }<strong>Player ${target}</strong> - ${key == "score" ? numberWithCommas(`${users[target][key]}`.padStart(9, "0")) : users[target][key]}</p>`;
   }
 };
 
@@ -76,15 +101,25 @@ const buttonClicked = () => {
         const target = Object.keys(users)[i];
         socket.emit("tutorial", users[target]["socketId"]);
         users[target].socketId = "";
-        users[target].game = {
-          score: 0,
-          combo: 0,
-        };
+        users[target].loaded = false;
+        users[target].score = 0;
+        users[target].combo = 0;
       }
       refreshList("nickname", true);
       buttons[0].textContent = "Start";
       buttons[0].disabled = true;
       buttons[1].textContent = "Skip";
+      break;
+    case 2:
+      display = 3;
+      for (let i = 0; i < Object.keys(users).length; i++) {
+        const target = Object.keys(users)[i];
+        socket.emit("tutorial start", users[target]["socketId"]);
+      }
+      refreshList("score", true);
+      buttons[0].textContent = "Restart";
+      buttons[1].classList.add("hidden");
+      break;
   }
 };
 

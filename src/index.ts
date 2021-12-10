@@ -31,6 +31,14 @@ app.get("/display", (req, res) => {
   });
 });
 
+app.get("/tutorial", (req, res) => {
+  res.render("tutorial", {
+    url: config.project.url,
+    game: config.project.game,
+    cdn: config.project.cdn,
+  });
+});
+
 app.listen(config.project.port, () => {
   console.log(`HTTP Server running at port ${config.project.port}.`);
 });

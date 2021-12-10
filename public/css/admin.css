@@ -50,13 +50,13 @@ button {
 #mainButton {
   background-color: #000;
   color: white;
-  transition-duration: .3s;
+  transition-duration: 0.3s;
 }
 
 #subButton {
   background-color: #fff;
   color: black;
-  transition-duration: .3s;
+  transition-duration: 0.3s;
 }
 
 #mainButton:not(:disabled):hover {
@@ -83,6 +83,10 @@ button:disabled {
 
 .listOnline.online {
   color: #21b448;
+}
+
+.listOnline.loading {
+  color: #dfab3b;
 }
 
 .listOnline.offline {
