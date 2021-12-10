@@ -11,10 +11,268 @@ body {
   user-select: none;
 }
 
-.mediaContainer {
+.containers {
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100vw;
+  height: 100vh;
+  opacity: 0;
+  transition-duration: 1s;
+}
+
+.containers.show {
+  opacity: 1;
+}
+
+#urlateVideoContainer {
+  pointer-events: all;
 }
 
 #urlateVideo {
   width: 100vw;
+}
+
+#albumOverlay {
+  background-color: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.containerTitle {
+  position: fixed;
+  top: 10vh;
+  color: #000;
+  font-size: 4vh;
+  font-weight: 700;
+}
+
+#albumOverlayAlbum {
+  width: 30vw;
+}
+
+#albumOverlayTrack {
+  margin-top: 2vh;
+  font-weight: 800;
+  font-size: 4vh;
+  color: #000;
+}
+
+#albumOverlayProducer {
+  margin-top: 1vh;
+  font-weight: 500;
+  font-size: 3vh;
+  color: #000;
+}
+
+#spectateOverlay {
+  background-color: #fff;
+  background-position: center;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.vContainers {
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  width: 100vw;
+  height: 50vh;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.hContainers {
+  box-sizing: border-box;
+  border: 2px solid white;
+  width: 50vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.textArea {
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50vw;
+  height: 6vh;
+}
+
+.contentArea {
+  display: flex;
+  flex-direction: column;
+  width: 50vw;
+  height: 44vh;
+}
+
+.scoreText {
+  font-weight: 800;
+  font-size: 3.5vh;
+  color: #000;
+}
+
+#rankingContainer {
+  background-image: url("/images/backgrounds/game.png");
+  background-size: cover;
+  background-position: center;
+}
+
+#rankContainer {
+  box-sizing: border-box;
+  padding: 2vw;
+  width: 50vw;
+  height: 34vh;
+}
+
+#rankContainerTrack {
+  display: flex;
+  flex-direction: row;
+  width: 50vw;
+  height: 10vh;
+  background-size: cover;
+  background-position-x: center;
+  animation-duration: 20s;
+  animation-name: rankContainerArt;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+#rankContainerLeft {
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  width: calc(100% - 10vh);
+  height: 10vh;
+}
+
+#rankContainerRight {
+  box-sizing: border-box;
+  border: 5px solid white;
+  background-size: cover;
+  background-position: center;
+  width: 10vh;
+  height: 10vh;
+}
+
+@keyframes rankContainerArt {
+  0% {
+    background-position-y: 25%;
+  }
+
+  100% {
+    background-position-y: 75%;
+  }
+}
+
+#rankContainerLeftTop {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 9vh;
+}
+
+#rankContainerLeftBottom {
+  background-color: rgba(0, 0, 0, 0.4);
+  width: 100%;
+  height: 1vh;
+}
+
+#rankContainerDuration {
+  background-color: white;
+  width: 0%;
+  height: 1vh;
+}
+
+#rankContainerLeftInformation {
+  color: white;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  width: 50%;
+  height: 9vh;
+}
+
+#rankContainerLeftTrack {
+  color: white;
+  padding-right: 1vw;
+  width: calc(50% - 1vw);
+  height: 9vh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+#rankContainerTitle {
+  font-size: 3.5vh;
+  font-weight: 600;
+}
+
+#rankContainerProducer {
+  font-size: 2.5vh;
+  font-weight: 400;
+}
+
+.rankContainerLeftInformationColumn {
+  margin-left: 1vw;
+  display: flex;
+  flex-direction: column;
+  color: white;
+  line-height: 150%;
+  font-size: 1.3vh;
+}
+
+.rankContainerInfoTitle {
+  font-weight: 700;
+}
+
+.rankElements {
+  font-size: 3vh;
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 46vw;
+  height: 6vh;
+  transition-duration: 0.5s;
+}
+
+.rankElementLeft {
+  font-family: "iosevka web", "Pretendard Variable", arial;
+}
+
+.rankElementRank {
+  font-weight: 700;
+}
+
+.rankElementName {
+  font-weight: 400;
+}
+
+.rankElementGap {
+  color: #ee6464;
+  font-size: 2vh;
+}
+
+.rankElements.second {
+  margin-top: 6vh;
+}
+
+.rankElements.third {
+  margin-top: 12vh;
 }

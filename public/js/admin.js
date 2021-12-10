@@ -108,6 +108,7 @@ const buttonClicked = () => {
       break;
     case 1:
       display = 2;
+      socket.emit("tutorial", "Display");
       for (let i = 0; i < Object.keys(users).length; i++) {
         const target = Object.keys(users)[i];
         socket.emit("tutorial", users[target]["socketId"]);
@@ -127,6 +128,7 @@ const buttonClicked = () => {
         const target = Object.keys(users)[i];
         socket.emit("tutorial start", users[target]["socketId"]);
       }
+      socket.emit("tutorial start", "Display");
       refreshList("nickname", true, true);
       buttons[0].textContent = "Restart";
       buttons[1].classList.add("hidden");

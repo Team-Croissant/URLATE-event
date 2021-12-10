@@ -8,11 +8,116 @@
   <title>URLATE Display</title>
 </head>
 <body>
-  <div class="mediaContainer" id="urlateVideoContainer" onclick="mediaPlay()">
+  <div class="containers show" id="urlateVideoContainer" onclick="mediaPlay()">
     <video id="urlateVideo" autoplay loop>
       <source src="/videos/urlate.mp4" type="video/mp4">
     </video>
   </div>
+  <div class="containers" id="spectateOverlay">
+    <div class="containers" id="albumOverlay">
+      <span class="containerTitle">NOW SPECTATING</span>
+      <img src="<%= cdn %>/albums/100/tutorial (Custom).png" id="albumOverlayAlbum">
+      <span id="albumOverlayTrack">Tutorial</span>
+      <span id="albumOverlayProducer">Geoplex</span>
+    </div>
+    <div class="vContainers">
+      <div class="hContainers">
+        <div class="textArea">
+          <span class="scoreText">000,000,000</span>
+        </div>
+        <div class="contentArea"></div>
+      </div>
+      <div class="hContainers">
+        <div class="textArea">
+          <span class="scoreText">000,000,000</span>
+        </div>
+        <div class="contentArea"></div>
+      </div>
+    </div>
+    <div class="vContainers">
+      <div class="hContainers">
+        <div class="contentArea"></div>
+        <div class="textArea">
+          <span class="scoreText">000,000,000</span>
+        </div>
+      </div>
+      <div class="hContainers" id="rankingContainer">
+        <div class="contentArea">
+          <div id="rankContainer">
+            <div class="rankElements">
+              <div class="rankElementLeft">
+                <span class="rankElementRank">#1</span>
+                <span class="rankElementName">1234 가나다</span>
+                <span class="rankElementGap">(- 0)</span>
+              </div>
+              <div class="rankElementRight">
+                <span class="rankElementScore">000,000,000</span>
+              </div>
+            </div>
+            <div class="rankElements second">
+              <div class="rankElementLeft">
+                <span class="rankElementRank">#2</span>
+                <span class="rankElementName">1234 가나다</span>
+                <span class="rankElementGap">(- 0)</span>
+              </div>
+              <div class="rankElementRight">
+                <span class="rankElementScore">000,000,000</span>
+              </div>
+            </div>
+            <div class="rankElements third">
+              <div class="rankElementLeft">
+                <span class="rankElementRank">#3</span>
+                <span class="rankElementName">1234 가나다</span>
+                <span class="rankElementGap">(- 0)</span>
+              </div>
+              <div class="rankElementRight">
+                <span class="rankElementScore">000,000,000</span>
+              </div>
+            </div>
+          </div>
+          <div id="rankContainerTrack">
+            <div id="rankContainerLeft">
+              <div id="rankContainerLeftTop">
+                <div id="rankContainerLeftInformation">
+                  <div class="rankContainerLeftInformationColumn">
+                    <span class="rankContainerInfoTitle">Note</span>
+                    <span class="rankContainerInfoTitle">Bullet</span>
+                    <span class="rankContainerInfoTitle">Speed</span>
+                    <span class="rankContainerInfoTitle">BPM</span>
+                  </div>
+                  <div class="rankContainerLeftInformationColumn">
+                    <span class="rankContainerInfoValue">3</span>
+                    <span class="rankContainerInfoValue">13</span>
+                    <span class="rankContainerInfoValue">1</span>
+                    <span class="rankContainerInfoValue">185</span>
+                  </div>
+                </div>
+                <div id="rankContainerLeftTrack">
+                  <span id="rankContainerTitle">Tutorial</span>
+                  <span id="rankContainerProducer">Geoplex</span>
+                </div>
+              </div>
+              <div id="rankContainerLeftBottom">
+                <div id="rankContainerDuration"></div>
+              </div>
+            </div>
+            <div id="rankContainerRight"></div>
+          </div>
+        </div>
+        <div class="textArea">
+          <span class="scoreText">RANKING</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+      const cdn = "<%= cdn %>";
+      const url = "<%= url %>";
+      const game = "<%= game %>";
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.7.5/lottie.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.1.2/howler.min.js"></script>
   <script src="/js/display.js"></script>
 </body>
 </html>

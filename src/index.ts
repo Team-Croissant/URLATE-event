@@ -28,6 +28,7 @@ app.get("/display", (req, res) => {
   res.render("display", {
     url: config.project.url,
     game: config.project.game,
+    cdn: config.project.cdn,
   });
 });
 
