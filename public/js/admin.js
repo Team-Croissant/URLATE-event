@@ -143,14 +143,33 @@ const buttonClicked = () => {
       break;
     case 2:
       display = 3;
+      let date = new Date();
+      date.setSeconds(date.getSeconds() + 5);
       for (let i = 0; i < Object.keys(users).length; i++) {
         const target = Object.keys(users)[i];
-        socket.emit("tutorial start", users[target]["socketId"]);
+        socket.emit("tutorial start", users[target]["socketId"], date);
       }
-      socket.emit("tutorial start", "Display");
+      socket.emit("tutorial start", "Display", date);
       refreshList("nickname", true, true);
       buttons[0].textContent = "Restart";
       buttons[1].classList.add("hidden");
+      break;
+    case 3:
+      display = 2;
+      for (let i = 0; i < Object.keys(users).length; i++) {
+        const target = Object.keys(users)[i];
+        socket.emit("tutorial restart", users[target]["socketId"]);
+        users[target].socketId = "";
+        users[target].loaded = false;
+        users[target].ready = false;
+        users[target].score = 0;
+        users[target].combo = 0;
+      }
+      socket.emit("tutorial restart", "Display");
+      buttons[0].textContent = "Start";
+      buttons[0].disabled = true;
+      buttons[1].textContent = "Skip";
+      refreshList("nickname", true);
       break;
   }
 };

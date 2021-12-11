@@ -24,9 +24,17 @@ const socketInitialize = () => {
     initialize();
   });
 
-  socket.on("tutorial start", () => {
-    spectate();
+  socket.on("tutorial start", (date) => {
+    spectateInitialize();
   });
+
+  socket.on("tutorial restart", () => {
+    reset();
+  });
+};
+
+const reset = () => {
+  initialize();
 };
 
 const initialize = () => {
@@ -35,6 +43,6 @@ const initialize = () => {
   document.getElementById("albumOverlay").classList.add("show");
 };
 
-const spectate = () => {
+const spectateInitialize = () => {
   document.getElementById("albumOverlay").classList.remove("show");
 };

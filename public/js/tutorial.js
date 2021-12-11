@@ -187,7 +187,7 @@ const socketInitialize = (id) => {
       clearInterval(connectInterval);
     });
 
-    socket.on("tutorial start", () => {
+    socket.on("tutorial start", (date) => {
       cntRender();
       document.getElementById("componentCanvas").style.opacity = "1";
       document.getElementById("loadingContainer").style.opacity = "0";
@@ -197,7 +197,13 @@ const socketInitialize = (id) => {
         document.getElementById("loadingContainer").style.display = "none";
         document.getElementById("componentCanvas").style.transitionDuration = "0s";
       }, 1000);
-      setTimeout(songPlayPause, 1000);
+      const timeout = new Date(date) - new Date();
+      console.log(timeout);
+      setTimeout(songPlayPause, timeout);
+    });
+
+    socket.on("tutorial restart", () => {
+      location.reload();
     });
 
     socket.on("admin disconnected", () => {
