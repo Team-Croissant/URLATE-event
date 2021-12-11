@@ -111,6 +111,14 @@ const socketInitialize = () => {
 };
 
 const reset = () => {
+  destroyedBullets = [new Set(), new Set(), new Set()];
+  prevDestroyedBullets = [new Set(), new Set(), new Set()];
+  destroyedNotes = [new Set(), new Set(), new Set()];
+  destroyParticles = [[], [], []];
+  missParticles = [[], [], []];
+  circleBulletAngles = [[], [], []];
+  document.getElementById("rankContainerDuration").style.transitionDuration = `0s`;
+  document.getElementById("rankContainerDuration").style.width = "0%";
   song.stop();
   initialize();
 };
@@ -216,6 +224,8 @@ const spectateInitialize = (date) => {
 };
 
 const songPlayPause = () => {
+  document.getElementById("rankContainerDuration").style.transitionDuration = `${song.duration()}s`;
+  document.getElementById("rankContainerDuration").style.width = "100%";
   if (song.playing()) {
     song.pause();
     menuAllowed = false;

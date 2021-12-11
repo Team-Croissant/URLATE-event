@@ -192,6 +192,7 @@ body {
 }
 
 #rankContainerDuration {
+  transition-timing-function: linear;
   background-color: white;
   width: 0%;
   height: 1vh;
@@ -220,7 +221,7 @@ body {
 
 #rankContainerTitle {
   font-size: 3.5vh;
-  font-weight: 600;
+  font-weight: 800;
 }
 
 #rankContainerProducer {
