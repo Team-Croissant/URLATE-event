@@ -181,6 +181,9 @@ const socketInitialize = (id) => {
     });
 
     socket.on("connected", () => {
+      if (load == 2) {
+        socket.emit("tutorial loaded");
+      }
       clearInterval(connectInterval);
     });
 
