@@ -866,6 +866,7 @@ const cntRender = () => {
       const p = (((bpm * 14) / speed - (renderNotes[i].ms - seek * 1000)) / ((bpm * 14) / speed)) * 100;
       drawNote(p, renderNotes[i].x, renderNotes[i].y, renderNotes[i].value, renderNotes[i].direction);
       if (p >= 120 && !destroyedNotes.has(start + i)) {
+        socket.emit("judge", userId, "Miss", renderNotes[i].x, renderNotes[i].y);
         calculateScore("miss", start + i, true);
         missParticles.push({
           x: renderNotes[i].x,
@@ -933,21 +934,6 @@ const cntRender = () => {
   ctx.font = `${canvas.height / 40}px Metropolis, Pretendard Variable`;
   ctx.fillStyle = "#555";
   ctx.fillText(`${combo}x`, canvas.width / 2, canvas.height / 70 + canvas.height / 25);
-  drawCursor();
-
-  //fps counter
-  if (frameCounter) {
-    frameArray.push(1000 / (Date.now() - frameCounterMs));
-    if (frameArray.length == 5) {
-      fps = (frameArray[0] + frameArray[1] + frameArray[2] + frameArray[3] + frameArray[4]) / 5;
-      frameArray = [];
-    }
-    // ctx.font = "2.5vh Heebo";
-    // ctx.fillStyle = "#555";
-    // ctx.textBaseline = "bottom";
-    // ctx.fillText(fps.toFixed(), canvas.width / 2, canvas.height - canvas.height / 70);
-    frameCounterMs = Date.now();
-  }
   drawCursor();
   requestAnimationFrame(cntRender);
 };
@@ -1045,6 +1031,7 @@ const trackMouseSelection = (i, v1, v2, x, y) => {
       case 1:
         if (Math.sqrt(Math.pow(powX, 2) + Math.pow(powY, 2)) <= canvas.width / 80) {
           if (!destroyedBullets.has(i)) {
+            socket.emit("destroy", userId, i);
             bullet++;
             missPoint.push(song.seek() * 1000);
             combo = 0;
@@ -1095,22 +1082,27 @@ const compClicked = (isTyped, key, isWheel) => {
       let x = pattern.patterns[pointingCntElement[i].i].x;
       let y = pattern.patterns[pointingCntElement[i].i].y;
       if (seek < ms + perfectJudge && seek > ms - perfectJudge) {
+        socket.emit("judge", userId, "Perfect", x, y);
         calculateScore("perfect", pointingCntElement[i].i);
         drawParticle(3, x, y, "Perfect");
         perfect++;
       } else if (seek < ms + greatJudge && seek > ms - greatJudge) {
+        socket.emit("judge", userId, "Great", x, y);
         calculateScore("great", pointingCntElement[i].i);
         drawParticle(3, x, y, "Great");
         great++;
       } else if (seek > ms - goodJudge && seek < ms) {
+        socket.emit("judge", userId, "Good", x, y);
         calculateScore("good", pointingCntElement[i].i);
         drawParticle(3, x, y, "Good");
         good++;
       } else if ((seek > ms - badJudge && seek < ms) || ms < seek) {
+        socket.emit("judge", userId, "Bad", x, y);
         calculateScore("bad", pointingCntElement[i].i);
         drawParticle(3, x, y, "Bad");
         bad++;
       } else {
+        socket.emit("judge", userId, "Miss", x, y);
         calculateScore("miss", pointingCntElement[i].i);
         drawParticle(3, x, y, "Miss");
         miss++;

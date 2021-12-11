@@ -58,6 +58,8 @@ let mouseX = [0, 0, 0];
 let mouseY = [0, 0, 0];
 let hide = {};
 let denySkin = false;
+let judgeSkin = false;
+let advanced = false;
 
 let users = {};
 
@@ -103,6 +105,14 @@ const socketInitialize = () => {
   socket.on("score", (id, score) => {
     users[id].score = score;
     updateRank();
+  });
+
+  socket.on("judge", (id, judge, x, y) => {
+    drawParticle(3, x, y, judge, "", id - 1);
+  });
+
+  socket.on("destroy", (id, i) => {
+    callBulletDestroy(i, id - 1);
   });
 
   socket.on("tutorial restart", () => {
