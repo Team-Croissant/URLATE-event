@@ -38,6 +38,7 @@ const reset = () => {
 };
 
 const initialize = () => {
+  document.getElementById("urlateVideo").pause();
   document.getElementById("urlateVideoContainer").classList.remove("show");
   document.getElementById("spectateOverlay").classList.add("show");
   document.getElementById("albumOverlay").classList.add("show");
