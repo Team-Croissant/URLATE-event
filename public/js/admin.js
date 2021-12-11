@@ -72,26 +72,28 @@ const socketInitialize = () => {
 
   socket.on("disconnected", (socketId) => {
     const index = Object.keys(users).find((key) => users[key].socketId === socketId);
-    if (display == 0 || display == 1) {
-      delete users[index];
-    } else {
-      users[index].socketId = "";
-      users[index].loaded = false;
+    if (index) {
+      if (display == 0 || display == 1) {
+        delete users[index];
+      } else {
+        users[index].socketId = "";
+        users[index].loaded = false;
         users[index].ready = false;
-    }
-    switch (display) {
-      case 0:
-        refreshList("socketId");
-        break;
-      case 1:
-        refreshList("nickname");
-        break;
-      case 2:
-        refreshList("nickname", true);
-        break;
-      case 3:
-        refreshList("nickname", true, true);
-        break;
+      }
+      switch (display) {
+        case 0:
+          refreshList("socketId");
+          break;
+        case 1:
+          refreshList("nickname");
+          break;
+        case 2:
+          refreshList("nickname", true);
+          break;
+        case 3:
+          refreshList("nickname", true, true);
+          break;
+      }
     }
   });
 };
