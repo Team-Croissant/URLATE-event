@@ -1,5 +1,8 @@
+let isGamePlaying = false;
 const mediaPlay = () => {
-  document.getElementById("urlateVideo").play();
+  if (!isGamePlaying) {
+    document.getElementById("urlateVideo").play();
+  }
 };
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -38,6 +41,7 @@ const reset = () => {
 };
 
 const initialize = () => {
+  isGamePlaying = true;
   document.getElementById("urlateVideo").pause();
   document.getElementById("urlateVideoContainer").classList.remove("show");
   document.getElementById("spectateOverlay").classList.add("show");
