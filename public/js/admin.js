@@ -70,6 +70,11 @@ const socketInitialize = () => {
     if (isFinished) buttons[0].disabled = false;
   });
 
+  socket.on("score", (id, score) => {
+    users[id].score = score;
+    refreshList("nickname", true, true);
+  });
+
   socket.on("disconnected", (socketId) => {
     const index = Object.keys(users).find((key) => users[key].socketId === socketId);
     if (index) {
