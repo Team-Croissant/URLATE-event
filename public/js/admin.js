@@ -126,7 +126,6 @@ const buttonClicked = () => {
       break;
     case 1:
       display = 2;
-      socket.emit("tutorial", "Display");
       for (let i = 0; i < Object.keys(users).length; i++) {
         const target = Object.keys(users)[i];
         socket.emit("tutorial", users[target]["socketId"]);
@@ -134,8 +133,8 @@ const buttonClicked = () => {
         users[target].loaded = false;
         users[target].ready = false;
         users[target].score = 0;
-        users[target].combo = 0;
       }
+      socket.emit("tutorial", "Display", users);
       refreshList("nickname", true);
       buttons[0].textContent = "Start";
       buttons[0].disabled = true;

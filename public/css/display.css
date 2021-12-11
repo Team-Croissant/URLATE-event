@@ -268,6 +268,12 @@ body {
 .rankElementGap {
   color: #ee6464;
   font-size: 2vh;
+  transition-duration: 0s;
+  opacity: 1;
+}
+
+.rankElementGap.hidden {
+  opacity: 0;
 }
 
 .rankElements.second {

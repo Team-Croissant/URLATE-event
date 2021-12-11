@@ -50,10 +50,16 @@ let destroyedBullets = [new Set(), new Set(), new Set()],
   destroyParticles = [[], [], []],
   missParticles = [[], [], []],
   circleBulletAngles = [[], [], []];
+let displayScore = [0, 0, 0],
+  prevScore = [0, 0, 0],
+  score = [0, 0, 0],
+  scoreMs = [0, 0, 0];
 let mouseX = [0, 0, 0];
 let mouseY = [0, 0, 0];
 let hide = {};
 let denySkin = false;
+
+let users = {};
 
 const mediaPlay = () => {
   if (!isGamePlaying) {
@@ -79,7 +85,8 @@ const socketInitialize = () => {
     location.reload();
   });
 
-  socket.on("tutorial", () => {
+  socket.on("tutorial", (data) => {
+    users = data;
     initialize();
   });
 
@@ -93,6 +100,11 @@ const socketInitialize = () => {
     mouseY[id] = y;
   });
 
+  socket.on("score", (id, score) => {
+    users[id].score = score;
+    updateRank();
+  });
+
   socket.on("tutorial restart", () => {
     reset();
   });
@@ -104,6 +116,19 @@ const reset = () => {
 };
 
 const initialize = () => {
+  rankContainer.innerHTML = "";
+  for (let u in users) {
+    rankContainer.innerHTML += `<div class="rankElements ${["", "", "second", "third"][u]}" id="user${u}">
+                                  <div class="rankElementLeft">
+                                    <span class="rankElementRank" id="rank${u}">#${u}</span>
+                                    <span class="rankElementName">${users[u].nickname}</span>
+                                    <span class="rankElementGap hidden" id="gap${u}">(- 0)</span>
+                                  </div>
+                                  <div class="rankElementRight">
+                                    <span class="rankElementScore" id="score${u}">000,000,000</span>
+                                  </div>
+                                </div>`;
+  }
   isGamePlaying = true;
   document.getElementById("urlateVideo").pause();
   document.getElementById("urlateVideoContainer").classList.remove("show");
@@ -137,6 +162,36 @@ const initialize = () => {
     canvasArr[k].width = (window.innerWidth * window.devicePixelRatio) / 2;
     canvasArr[k].height = (window.innerHeight * window.devicePixelRatio) / (100 / 44);
   }
+};
+
+const updateRank = () => {
+  let usersArr = [];
+  for (let i = 0; i < Object.keys(users).length; i++) {
+    usersArr.push(users[Object.keys(users)[i]]);
+    usersArr[i].id = Object.keys(users)[i];
+  }
+  usersArr.sort((a, b) => b.score - a.score);
+  for (let i = 0; i < usersArr.length; i++) {
+    const id = usersArr[i].id;
+    document.getElementById(`rank${id}`).textContent = `#${i + 1}`;
+    document.getElementById(`user${id}`).className = "";
+    document.getElementById(`user${id}`).classList.add("rankElements");
+    document.getElementById(`user${id}`).classList.add(["", "first", "second", "third"][i + 1]);
+    if (i > 0) {
+      document.getElementById(`gap${id}`).classList.remove("hidden");
+      document.getElementById(`gap${id}`).textContent = `(- ${numberWithCommas(`${usersArr[i - 1].score - usersArr[i].score}`)})`;
+    } else {
+      document.getElementById(`gap${id}`).classList.add("hidden");
+    }
+    updateScore(id, usersArr[i].score);
+  }
+};
+
+const updateScore = (n, value) => {
+  document.getElementById(`score${n}`).textContent = numberWithCommas(`${value}`.padStart(9, "0"));
+  scoreMs[n - 1] = Date.now();
+  prevScore[n - 1] = displayScore[n - 1];
+  score[n - 1] = value;
 };
 
 window.addEventListener("resize", () => {
@@ -175,18 +230,6 @@ const cntRender = () => {
   for (let k = 0; k < canvasArr.length; k++) {
     const canvas = canvasArr[k];
     const ctx = canvas.getContext("2d");
-    ctx.beginPath();
-    ctx.lineJoin = "round";
-    const percentage = song.seek() / song.duration();
-    const rectX = canvas.width / 2 - canvas.width / 14;
-    const rectY = canvas.height - canvas.height / 80 - canvas.height / 200;
-    const rectWidth = canvas.width / 7;
-    const rectHeight = canvas.height / 200;
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = "#222";
-    ctx.fillStyle = "#222";
-    ctx.strokeRect(rectX, rectY, rectWidth, rectHeight);
-    ctx.fillRect(rectX, rectY, rectWidth * percentage, rectHeight);
     ctx.lineWidth = 5;
     const seek = song.seek() - offset / 1000;
     let start = lowerBound(pattern.triggers, 0);
@@ -265,6 +308,13 @@ const cntRender = () => {
         }
       }
     }
+    if (Date.now() - scoreMs[k] < 500) {
+      displayScore[k] += ((score[k] - prevScore[k]) / 500) * (Date.now() - scoreMs[k]);
+      prevScore[k] = displayScore[k];
+    } else {
+      displayScore[k] = score[k];
+    }
+    document.getElementsByClassName(`scoreText`)[k].textContent = numberWithCommas(`${parseInt(displayScore[k])}`.padStart(9, "0"));
     drawCursor(k);
   }
   requestAnimationFrame(cntRender);

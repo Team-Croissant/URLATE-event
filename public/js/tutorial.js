@@ -1152,6 +1152,7 @@ const calculateScore = (judge, i, isMissed) => {
     combo = 0;
     score += Math.round((100000000 / patternLength) * 0.05);
   }
+  socket.emit("score", userId, score);
   if (combo % comboCount == 0 && combo != 0) {
     comboAlertMs = Date.now();
     comboAlertCount = combo;
