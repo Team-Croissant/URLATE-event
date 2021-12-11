@@ -198,7 +198,6 @@ const socketInitialize = (id) => {
         document.getElementById("componentCanvas").style.transitionDuration = "0s";
       }, 1000);
       const timeout = new Date(date) - new Date();
-      console.log(timeout);
       setTimeout(songPlayPause, timeout);
     });
 
@@ -619,6 +618,7 @@ const drawNote = (p, x, y, n, d) => {
 
 const drawCursor = () => {
   ctx.beginPath();
+  socket.emit("update", userId, mouseX, mouseY);
   let w = (canvas.width / 70) * cursorZoom;
   if (mouseClickedMs == -1) {
     mouseClickedMs = Date.now() - 100;
