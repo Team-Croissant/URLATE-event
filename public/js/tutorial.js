@@ -242,6 +242,12 @@ const initialize = (isFirstCalled) => {
   missCanvas.height = window.innerHeight * 0.05 * pixelRatio;
 };
 
+const ready = () => {
+  socket.emit("ready");
+  document.getElementById("ready").classList.add("enabled");
+  document.getElementById("ready").textContent = "I'm ready!";
+};
+
 const lottieLoad = (needToSeek) => {
   let blob = new Blob([pattern.background.lottie], {
     type: "application/json",
