@@ -1,7 +1,3 @@
-const songFileList = {
-  Tutorial: "tutorial",
-};
-
 const skin = {
   cursor: {
     type: "gradient",
@@ -73,9 +69,6 @@ const mediaPlay = () => {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("spectateOverlay").style.backgroundImage = `url("${cdn}/albums/100/tutorial (Custom).png")`;
-  document.getElementById("rankContainerTrack").style.backgroundImage = `url("${cdn}/albums/100/tutorial (Custom).png")`;
-  document.getElementById("rankContainerRight").style.backgroundImage = `url("${cdn}/albums/100/tutorial (Custom).png")`;
   socketInitialize();
 });
 
@@ -92,7 +85,7 @@ const socketInitialize = () => {
 
   socket.on("tutorial", (data) => {
     users = data;
-    initialize();
+    initialize("tutorial");
   });
 
   socket.on("tutorial start", (date) => {
@@ -148,7 +141,7 @@ const reset = () => {
   initialize();
 };
 
-const initialize = () => {
+const initialize = (track) => {
   rankContainer.innerHTML = "";
   for (let u in users) {
     rankContainer.innerHTML += `<div class="rankElements ${["", "", "second", "third"][u]}" id="user${u}">
@@ -167,7 +160,7 @@ const initialize = () => {
   document.getElementById("urlateVideoContainer").classList.remove("show");
   document.getElementById("spectateOverlay").classList.add("show");
   document.getElementById("albumOverlay").classList.add("show");
-  fetch(`${cdn}/URLATE-patterns/tutorial/0_ko.json`, {
+  fetch(`${cdn}/URLATE-patterns/${track}/0.json`, {
     method: "GET",
     credentials: "include",
   })
@@ -180,12 +173,12 @@ const initialize = () => {
       patternLength = pattern.patterns.length;
       document.getElementById("albumOverlayTrack").textContent = pattern.information.track;
       document.getElementById("albumOverlayProducer").textContent = pattern.information.producer;
-      document.getElementById("spectateOverlay").style.backgroundImage = `url("${cdn}/albums/100/${songFileList[pattern.information.track]} (Custom).png")`;
-      document.getElementById("rankContainerTrack").style.backgroundImage = `url("${cdn}/albums/100/${songFileList[pattern.information.track]} (Custom).png")`;
-      document.getElementById("rankContainerRight").style.backgroundImage = `url("${cdn}/albums/100/${songFileList[pattern.information.track]} (Custom).png")`;
-      document.getElementById("albumOverlayAlbum").src = `${cdn}/albums/100/${songFileList[pattern.information.track]} (Custom).png`;
+      document.getElementById("spectateOverlay").style.backgroundImage = `url("${cdn}/albums/100/${track} (Custom).png")`;
+      document.getElementById("rankContainerTrack").style.backgroundImage = `url("${cdn}/albums/100/${track} (Custom).png")`;
+      document.getElementById("rankContainerRight").style.backgroundImage = `url("${cdn}/albums/100/${track} (Custom).png")`;
+      document.getElementById("albumOverlayAlbum").src = `${cdn}/albums/100/${track} (Custom).png`;
       song = new Howl({
-        src: `${cdn}/tracks/192kbps/${songFileList[pattern.information.track]}.mp3`,
+        src: `${cdn}/tracks/192kbps/${track}.mp3`,
         format: ["mp3"],
         autoplay: false,
         loop: false,
