@@ -6,6 +6,8 @@ const missCanvas = document.getElementById("missPointCanvas");
 const missCtx = missCanvas.getContext("2d");
 let pattern = {};
 let patternLength = 0;
+let isGameStarted = false;
+let timeout = 99999999999999999;
 let settings = {
   general: {
     detailLang: "original",
@@ -197,8 +199,7 @@ const socketInitialize = (id) => {
         document.getElementById("loadingContainer").style.display = "none";
         document.getElementById("componentCanvas").style.transitionDuration = "0s";
       }, 1000);
-      const timeout = new Date(date) - new Date();
-      setTimeout(songPlayPause, timeout);
+      timeout = new Date(date);
     });
 
     socket.on("tutorial restart", () => {
@@ -227,6 +228,10 @@ const socketInitialize = (id) => {
           scoreContainer.style.pointerEvents = "all";
         }, 2000);
       }, timeout);
+    });
+
+    socket.on("select music", () => {
+      window.location.href = `${url}/select?u=${userId}`;
     });
 
     socket.on("admin disconnected", () => {
@@ -789,6 +794,10 @@ const callBulletDestroy = (j) => {
 };
 
 const cntRender = () => {
+  if (timeout - new Date() <= 0 && !isGameStarted) {
+    songPlayPause();
+    isGameStarted = true;
+  }
   eraseCnt();
   if (window.devicePixelRatio != pixelRatio) {
     pixelRatio = window.devicePixelRatio;

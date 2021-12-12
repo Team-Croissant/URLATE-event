@@ -204,6 +204,20 @@ const buttonClicked = () => {
       buttons[1].textContent = "Skip";
       refreshList("nickname", true);
       break;
+    case 4:
+      display = 5;
+      for (let i = 0; i < Object.keys(users).length; i++) {
+        const target = Object.keys(users)[i];
+        socket.emit("select music", users[target]["socketId"]);
+        users[target].socketId = "";
+        users[target].loaded = false;
+      }
+      socket.emit("select music", "Display");
+      buttons[0].textContent = "wait..";
+      buttons[0].disabled = true;
+      buttons[1].classList.add("hidden");
+      refreshList("nickname", true);
+      break;
   }
 };
 
@@ -218,6 +232,37 @@ const subButtonClicked = () => {
       refreshList("nickname");
       buttons[0].textContent = "Next";
       buttons[0].disabled = true;
+      break;
+    case 2:
+      display = 5;
+      for (let i = 0; i < Object.keys(users).length; i++) {
+        const target = Object.keys(users)[i];
+        socket.emit("select music", users[target]["socketId"]);
+        users[target].socketId = "";
+        users[target].loaded = false;
+      }
+      socket.emit("select music", "Display");
+      buttons[0].textContent = "wait..";
+      buttons[0].disabled = true;
+      buttons[1].classList.add("hidden");
+      refreshList("nickname", true);
+      break;
+    case 4:
+      display = 2;
+      for (let i = 0; i < Object.keys(users).length; i++) {
+        const target = Object.keys(users)[i];
+        socket.emit("tutorial restart", users[target]["socketId"]);
+        users[target].socketId = "";
+        users[target].loaded = false;
+        users[target].ready = false;
+        users[target].score = 0;
+        users[target].combo = 0;
+      }
+      socket.emit("tutorial restart", "Display");
+      buttons[0].textContent = "Start";
+      buttons[0].disabled = true;
+      buttons[1].textContent = "Skip";
+      refreshList("nickname", true);
       break;
   }
 };

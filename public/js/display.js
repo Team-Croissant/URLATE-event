@@ -42,6 +42,9 @@ let resultEffect = new Howl({
   loop: false,
 });
 
+let timeout = 99999999999999999;
+let isGameStarted = false;
+
 const canvasArr = document.getElementsByClassName("spectateCanvas");
 const colorOverlayContainer = document.getElementsByClassName("colorOverlayContainer");
 const scoreText = document.getElementsByClassName("scoreText");
@@ -240,6 +243,8 @@ const socketInitialize = () => {
 };
 
 const reset = () => {
+  timeout = 99999999999999999;
+  isGameStarted = false;
   destroyedBullets = [new Set(), new Set(), new Set()];
   prevDestroyedBullets = [new Set(), new Set(), new Set()];
   destroyedNotes = [new Set(), new Set(), new Set()];
@@ -350,8 +355,7 @@ const eraseCnt = () => {
 const spectateInitialize = (date) => {
   cntRender();
   document.getElementById("albumOverlay").classList.remove("show");
-  const timeout = new Date(date) - new Date();
-  setTimeout(songPlayPause, timeout);
+  timeout = new Date(date);
 };
 
 const songPlayPause = () => {
@@ -367,6 +371,10 @@ const songPlayPause = () => {
 };
 
 const cntRender = () => {
+  if (timeout - new Date() <= 0 && !isGameStarted) {
+    songPlayPause();
+    isGameStarted = true;
+  }
   eraseCnt();
   for (let k = 0; k < canvasArr.length; k++) {
     const canvas = canvasArr[k];
