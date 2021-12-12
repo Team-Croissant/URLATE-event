@@ -201,7 +201,7 @@ const socketInitialize = () => {
         const id = usersArr[i].id;
         rankScreenElementsContainer.innerHTML += `<div class="rankScreenElements">
                                           <div class="rankElementLeft">
-                                            <span class="rankElementRank">#${i}</span>
+                                            <span class="rankElementRank">#${i + 1}</span>
                                             <span class="rankElementName">${users[id].nickname}</span>
                                             <span class="rankScreenElementGap${i == 0 ? "hidden" : ""}">${
           i == 0 ? "" : `(- ${numberWithCommas(`${users[usersArr[i - 1].id].score - users[id].score}`)})`
