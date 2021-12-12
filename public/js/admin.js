@@ -49,7 +49,7 @@ const socketInitialize = () => {
   socket.on("tutorial loaded", (socketId) => {
     users[Object.keys(users).find((key) => users[key].socketId === socketId)].loaded = true;
     refreshList("nickname", true);
-    isFinished = true;
+    let isFinished = true;
     for (let i = 0; i < Object.keys(users).length; i++) {
       const target = Object.keys(users)[i];
       if (!users[target].loaded) isFinished = false;
@@ -61,7 +61,7 @@ const socketInitialize = () => {
   socket.on("ready", (socketId) => {
     users[Object.keys(users).find((key) => users[key].socketId === socketId)].ready = true;
     refreshList("nickname", true);
-    isFinished = true;
+    let isFinished = true;
     for (let i = 0; i < Object.keys(users).length; i++) {
       const target = Object.keys(users)[i];
       if (!users[target].loaded) isFinished = false;
@@ -73,6 +73,35 @@ const socketInitialize = () => {
   socket.on("score", (id, score) => {
     users[id].score = score;
     refreshList("nickname", true, true);
+  });
+
+  socket.on("game ended", (id, score, rank, judge) => {
+    users[id].rank = rank;
+    let isFinished = true;
+    for (let i = 0; i < Object.keys(users).length; i++) {
+      const target = Object.keys(users)[i];
+      if (!users[target].rank) isFinished = false;
+    }
+    if (isFinished) {
+      display = 4;
+      let usersArr = [];
+      for (let i = 0; i < Object.keys(users).length; i++) {
+        usersArr.push(users[Object.keys(users)[i]]);
+        usersArr[i].id = Object.keys(users)[i];
+      }
+      usersArr.sort((a, b) => b.score - a.score);
+      for (let i = 0; i < usersArr.length; i++) {
+        const id = usersArr[i].id;
+        users[id].rank = `#${i + 1}`;
+      }
+      refreshList("nickname", true, false, "rank");
+      buttons[0].textContent = "Next";
+      buttons[1].classList.remove("hidden");
+      buttons[1].textContent = "Retry";
+      let date = new Date();
+      date.setSeconds(date.getSeconds() + 5);
+      socket.emit("result sync", date);
+    }
   });
 
   socket.on("disconnected", (socketId) => {
@@ -103,7 +132,7 @@ const socketInitialize = () => {
   });
 };
 
-const refreshList = (key, isOnline, isGame) => {
+const refreshList = (key, isOnline, isGame, subKey) => {
   listContainer.innerHTML = "";
   for (let i = 0; i < Object.keys(users).length; i++) {
     const target = Object.keys(users)[i];
@@ -111,7 +140,7 @@ const refreshList = (key, isOnline, isGame) => {
       isOnline ? `<span class="listOnline ${users[target]["socketId"] == "" ? "offline" : users[target]["loaded"] ? "online" : "loading"}">● </span>` : ""
     }<strong>Player ${target}</strong> - ${users[target][key]}${
       isGame ? ` - ${numberWithCommas(`${users[target]["score"]}`.padStart(9, "0"))}` : isOnline ? (users[target]["ready"] ? "(ready)" : "(pending)") : ""
-    }</p>`;
+    }${subKey ? ` - ${users[target][subKey]}` : ""}</p>`;
   }
 };
 

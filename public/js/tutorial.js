@@ -205,6 +205,30 @@ const socketInitialize = (id) => {
       location.reload();
     });
 
+    socket.on("result sync", (date) => {
+      const timeout = new Date(date) - new Date();
+      setTimeout(() => {
+        document.getElementById("wallLeft").style.left = "-10vw";
+        document.getElementById("wallRight").style.right = "-10vw";
+        resultEffect.play();
+        setTimeout(() => {
+          document.getElementById("componentCanvas").style.opacity = "0";
+        }, 500);
+        setTimeout(() => {
+          floatingArrowContainer.style.display = "flex";
+          floatingArrowContainer.classList.toggle("arrowFade");
+        }, 1000);
+        setTimeout(() => {
+          floatingResultContainer.style.display = "flex";
+          floatingResultContainer.classList.toggle("resultFade");
+        }, 1300);
+        setTimeout(() => {
+          scoreContainer.style.opacity = "1";
+          scoreContainer.style.pointerEvents = "all";
+        }, 2000);
+      }, timeout);
+    });
+
     socket.on("admin disconnected", () => {
       window.location.href = `${url}/?u=${userId}`;
     });
@@ -947,9 +971,6 @@ const trackMousePos = () => {
 
 const calculateResult = () => {
   lottieAnim.stop();
-  document.getElementById("wallLeft").style.left = "-10vw";
-  document.getElementById("wallRight").style.right = "-10vw";
-  resultEffect.play();
   perfectResult.textContent = perfect;
   greatResult.textContent = great;
   goodResult.textContent = good;
@@ -977,21 +998,6 @@ const calculateResult = () => {
   }
   rankImg.src = `/images/parts/elements/${rank}.png`;
   scoreInfoRank.style.setProperty("--background", `url('/images/parts/elements/${rank}back.png')`);
-  setTimeout(() => {
-    document.getElementById("componentCanvas").style.opacity = "0";
-  }, 500);
-  setTimeout(() => {
-    floatingArrowContainer.style.display = "flex";
-    floatingArrowContainer.classList.toggle("arrowFade");
-  }, 1000);
-  setTimeout(() => {
-    floatingResultContainer.style.display = "flex";
-    floatingResultContainer.classList.toggle("resultFade");
-  }, 1300);
-  setTimeout(() => {
-    scoreContainer.style.opacity = "1";
-    scoreContainer.style.pointerEvents = "all";
-  }, 2000);
   missCtx.beginPath();
   missCtx.fillStyle = "#FFF";
   missCtx.strokeStyle = "#FFF";
@@ -1016,6 +1022,7 @@ const calculateResult = () => {
     missCtx.textBaseline = "bottom";
     missCtx.fillText("Perfect!", missCanvas.width - 10, missCanvas.height * 0.8 - 10);
   }
+  socket.emit("game ended", userId, score, rank.toLowerCase(), `(${maxCombo}x / ${perfect} / ${great} / ${good} / ${bad} / ${miss} / ${bullet})`);
 };
 
 const trackMouseSelection = (i, v1, v2, x, y) => {

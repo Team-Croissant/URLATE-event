@@ -36,11 +36,21 @@ const skin = {
   miss: { type: "color", color: "e84c38" },
 };
 
+let resultEffect = new Howl({
+  src: [`${cdn}/tracks/result.mp3`],
+  autoplay: false,
+  loop: false,
+});
+
 const canvasArr = document.getElementsByClassName("spectateCanvas");
 const colorOverlayContainer = document.getElementsByClassName("colorOverlayContainer");
 const scoreText = document.getElementsByClassName("scoreText");
 const rankElements = document.getElementsByClassName("rankElements");
+const animContainer = document.getElementById("animContainer");
+const rankContainer = document.getElementById("rankContainer");
+const rankScreenElementsContainer = document.getElementById("rankScreenElementsContainer");
 
+let lottieAnim;
 let isGamePlaying = false;
 let pattern, patternLength, song, offset, bpm, speed;
 let destroyedBullets = [new Set(), new Set(), new Set()],
@@ -68,9 +78,52 @@ const mediaPlay = () => {
   }
 };
 
+const lottieResize = () => {
+  let widthWidth = window.innerWidth;
+  let heightWidth = (window.innerHeight / 9) * 16;
+  if (widthWidth > heightWidth) {
+    animContainer.style.width = `${widthWidth}px`;
+    animContainer.style.height = `${(widthWidth / 16) * 9}px`;
+  } else {
+    animContainer.style.width = `${heightWidth}px`;
+    animContainer.style.height = `${(heightWidth / 16) * 9}px`;
+  }
+  let lottieCanvas = animContainer.getElementsByTagName("canvas")[0];
+  widthWidth = window.innerWidth * window.devicePixelRatio;
+  heightWidth = ((window.innerHeight * window.devicePixelRatio) / 9) * 16;
+  if (lottieCanvas) {
+    if (widthWidth > heightWidth) {
+      lottieCanvas.width = widthWidth;
+      lottieCanvas.height = (widthWidth / 16) * 9;
+    } else {
+      lottieCanvas.width = heightWidth;
+      lottieCanvas.height = (heightWidth / 16) * 9;
+    }
+  }
+  lottieAnim.destroy();
+  lottieAnim = bodymovin.loadAnimation({
+    wrapper: animContainer,
+    animType: "canvas",
+    loop: true,
+    path: "lottie/game.json",
+  });
+};
+
 document.addEventListener("DOMContentLoaded", () => {
+  lottieAnim = bodymovin.loadAnimation({
+    wrapper: animContainer,
+    animType: "canvas",
+    loop: true,
+    path: "lottie/game.json",
+  });
+  lottieAnim.addEventListener("DOMLoaded", () => {
+    lottieResize();
+  });
+  lottie.setSpeed(0.5);
   socketInitialize();
 });
+
+window.addEventListener("resize", lottieResize);
 
 const socketInitialize = () => {
   socket = io(game);
@@ -126,6 +179,64 @@ const socketInitialize = () => {
   socket.on("tutorial restart", () => {
     reset();
   });
+
+  socket.on("game ended", (id, score, rank, judge) => {
+    users[id].judge = judge;
+    users[id].score = score;
+    users[id].rank = rank;
+    let isFinished = true;
+    for (let i = 0; i < Object.keys(users).length; i++) {
+      const target = Object.keys(users)[i];
+      if (!users[target].rank) isFinished = false;
+    }
+    if (isFinished) {
+      rankScreenElementsContainer.innerHTML = "";
+      let usersArr = [];
+      for (let i = 0; i < Object.keys(users).length; i++) {
+        usersArr.push(users[Object.keys(users)[i]]);
+        usersArr[i].id = Object.keys(users)[i];
+      }
+      usersArr.sort((a, b) => b.score - a.score);
+      for (let i = 0; i < usersArr.length; i++) {
+        const id = usersArr[i].id;
+        rankScreenElementsContainer.innerHTML += `<div class="rankScreenElements">
+                                          <div class="rankElementLeft">
+                                            <span class="rankElementRank">#${i}</span>
+                                            <span class="rankElementName">${users[id].nickname}</span>
+                                            <span class="rankScreenElementGap${i == 0 ? "hidden" : ""}">${
+          i == 0 ? "" : `(- ${numberWithCommas(`${users[usersArr[i - 1].id].score - users[id].score}`)})`
+        }</span>
+                                          </div>
+                                          <div class="rankScreenElementRight">
+                                            <div class="rankScreenElementDetails">
+                                              <span class="rankScreenElementScore">${numberWithCommas(`${users[id].score}`)}</span>
+                                              <span class="rankScreenElementJudge">${users[id].judge}</span>
+                                            </div>
+                                            <div class="rankScreenElementRank ${users[id].rank}"></div>
+                                          </div>
+                                        </div>`;
+      }
+    }
+  });
+
+  socket.on("result sync", (date) => {
+    const timeout = new Date(date) - new Date();
+    setTimeout(() => {
+      resultEffect.play();
+      document.getElementById("rankAnimationOverlay").classList.add("show");
+      setTimeout(() => {
+        document.getElementById("rankAnimation").style.height = "100vh";
+      }, 500);
+      setTimeout(() => {
+        document.getElementById("rankScreenContainer").classList.add("show");
+        document.getElementById("rankAnimation").style.boxShadow = "none";
+        document.getElementById("rankAnimationOverlay").style.marginTop = "-100vh";
+      }, 1500);
+      setTimeout(() => {
+        //todo
+      }, 2000);
+    }, timeout);
+  });
 };
 
 const reset = () => {
@@ -173,6 +284,8 @@ const initialize = (track) => {
       patternLength = pattern.patterns.length;
       document.getElementById("albumOverlayTrack").textContent = pattern.information.track;
       document.getElementById("albumOverlayProducer").textContent = pattern.information.producer;
+      document.getElementById("rankScreenTrack").style.backgroundImage = `url("${cdn}/albums/100/${track} (Custom).png")`;
+      document.getElementById("rankScreenTrackRight").style.backgroundImage = `url("${cdn}/albums/100/${track} (Custom).png")`;
       document.getElementById("spectateOverlay").style.backgroundImage = `url("${cdn}/albums/100/${track} (Custom).png")`;
       document.getElementById("rankContainerTrack").style.backgroundImage = `url("${cdn}/albums/100/${track} (Custom).png")`;
       document.getElementById("rankContainerRight").style.backgroundImage = `url("${cdn}/albums/100/${track} (Custom).png")`;

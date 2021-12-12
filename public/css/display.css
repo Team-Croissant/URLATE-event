@@ -331,3 +331,242 @@ body {
   opacity: 0.7;
   transition-duration: 0s;
 }
+
+#rankAnimationOverlay {
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition-duration: 1s;
+}
+
+#rankAnimation {
+  z-index: 30;
+  position: relative;
+  font-size: 5vh;
+  font-weight: 800;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 20vh;
+  transition-duration: 1s;
+}
+
+.rankAnimationLine {
+  position: absolute;
+  width: 100vw;
+  height: 5px;
+  background: linear-gradient(to right, #6fabfe, #b452ff);
+}
+
+#rankAnimationLineTop {
+  top: 10px;
+}
+
+#rankAnimationLineBottom {
+  bottom: 10px;
+}
+
+#rankScreenContainer {
+  transition-duration: 0s;
+  background-color: white;
+  background-size: cover;
+  background-position: center;
+}
+
+#animContainer {
+  background-image: url("/images/backgrounds/main.png");
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#animContainer > canvas {
+  mix-blend-mode: color-burn;
+}
+
+#rankScreen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 10;
+  width: 100vw;
+  height: 80vh;
+}
+
+#rankScreenTrack {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 10;
+  width: 100vw;
+  height: 20vh;
+  background-size: cover;
+  background-position-x: center;
+  animation-duration: 20s;
+  animation-name: rankContainerArt;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+#rankScreenTrackLeft {
+  display: flex;
+  flex-direction: row;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  width: calc(100% - 20vh);
+  height: 20vh;
+}
+
+#rankScreenTrackRight {
+  box-sizing: border-box;
+  border: 10px solid white;
+  background-size: cover;
+  background-position: center;
+  height: 20vh;
+  width: 20vh;
+}
+
+#rankScreenTrackDetail {
+  color: white;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  width: 50%;
+  height: 20vh;
+}
+
+#rankScreenTrackInformation {
+  color: white;
+  padding-right: 2vw;
+  width: calc(50% - 2vw);
+  height: 20vh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+#rankScreenTrackTitle {
+  font-size: 6vh;
+  font-weight: 800;
+}
+
+#rankScreenTrackProducer {
+  font-size: 3vh;
+  font-weight: 400;
+}
+
+.rankScreenTrackDetailColumn {
+  margin-left: 2vw;
+  display: flex;
+  flex-direction: column;
+  color: white;
+  line-height: 150%;
+  font-size: 2.5vh;
+}
+
+#rankScreenElementsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  background-color: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  width: 100vw;
+}
+
+.rankScreenElements {
+  margin-top: 2vh;
+  margin-bottom: 2vh;
+  color: black;
+  font-size: 4vh;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 70vw;
+  transition-duration: 0.5s;
+}
+
+.rankScreenElementGap {
+  color: #ee6464;
+  font-size: 3vh;
+  transition-duration: 0s;
+  opacity: 1;
+}
+
+.rankScreenElementRight {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.rankScreenElementDetails {
+  margin-right: 1vw;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.rankScreenElementScore {
+  font-weight: 700;
+}
+
+.rankScreenElementJudge {
+  font-size: 3vh;
+}
+
+.rankScreenElementRank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 5vw;
+  font-weight: 900;
+  font-size: 5vh;
+}
+
+.rankScreenElementRank.ss::before {
+  content: "SS";
+  color: #e7db35;
+}
+
+.rankScreenElementRank.s::before {
+  content: "S";
+  color: #e7db35;
+}
+
+.rankScreenElementRank.a::before {
+  content: "A";
+  color: #29cf4b;
+}
+
+.rankScreenElementRank.b::before {
+  content: "B";
+  color: #22c7f0;
+}
+
+.rankScreenElementRank.c::before {
+  content: "C";
+  color: #f14b66;
+}
+
+.rankScreenElementRank.f::before {
+  content: "F";
+  color: #c0c0c0;
+}
