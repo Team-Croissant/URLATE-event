@@ -41,6 +41,9 @@ const skin = {
 };
 
 const canvasArr = document.getElementsByClassName("spectateCanvas");
+const colorOverlayContainer = document.getElementsByClassName("colorOverlayContainer");
+const scoreText = document.getElementsByClassName("scoreText");
+const rankElements = document.getElementsByClassName("rankElements");
 
 let isGamePlaying = false;
 let pattern, patternLength, song, offset, bpm, speed;
@@ -113,6 +116,18 @@ const socketInitialize = () => {
 
   socket.on("destroy", (id, i) => {
     callBulletDestroy(i, id - 1);
+  });
+
+  socket.on("damaged", (id) => {
+    id = id - 1;
+    colorOverlayContainer[id].classList.add("show");
+    scoreText[id].classList.add("damaged");
+    rankElements[id].classList.add("damaged");
+    setTimeout(() => {
+      colorOverlayContainer[id].classList.remove("show");
+      scoreText[id].classList.remove("damaged");
+      rankElements[id].classList.remove("damaged");
+    }, 100);
   });
 
   socket.on("tutorial restart", () => {

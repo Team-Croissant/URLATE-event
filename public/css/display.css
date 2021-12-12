@@ -122,6 +122,12 @@ body {
   font-weight: 800;
   font-size: 3.5vh;
   color: #000;
+  transition-duration: 0.5s;
+}
+
+.scoreText.damaged {
+  color: #ee6464;
+  transition-duration: 0s;
 }
 
 #rankingContainer {
@@ -243,6 +249,7 @@ body {
 }
 
 .rankElements {
+  color: black;
   font-size: 3vh;
   position: absolute;
   display: flex;
@@ -252,6 +259,11 @@ body {
   width: 46vw;
   height: 6vh;
   transition-duration: 0.5s;
+}
+
+.rankElements.damaged {
+  color: #ee6464;
+  transition-duration: 0s;
 }
 
 .rankElementLeft {
@@ -303,4 +315,19 @@ body {
   right: 1px;
   height: 100%;
   width: 15%;
+}
+
+.colorOverlayContainer {
+  position: absolute;
+  width: 50vw;
+  height: 44vh;
+  background-color: rgba(255, 100, 100, 0.3);
+  opacity: 0;
+  pointer-events: none;
+  transition-duration: 0.5s;
+}
+
+.colorOverlayContainer.show {
+  opacity: 0.7;
+  transition-duration: 0s;
 }

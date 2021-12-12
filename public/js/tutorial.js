@@ -1032,6 +1032,7 @@ const trackMouseSelection = (i, v1, v2, x, y) => {
         if (Math.sqrt(Math.pow(powX, 2) + Math.pow(powY, 2)) <= canvas.width / 80) {
           if (!destroyedBullets.has(i)) {
             socket.emit("destroy", userId, i);
+            socket.emit("damaged", userId);
             bullet++;
             missPoint.push(song.seek() * 1000);
             combo = 0;
@@ -1126,6 +1127,7 @@ const calculateScore = (judge, i, isMissed) => {
     pattern.patterns[i].ms = song.seek() * 1000 - (offset + sync);
   }
   if (judge == "miss") {
+    socket.emit("damaged", userId);
     combo = 0;
     return;
   }
