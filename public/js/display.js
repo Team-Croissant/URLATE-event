@@ -253,6 +253,11 @@ const reset = () => {
   circleBulletAngles = [[], [], []];
   document.getElementById("rankContainerDuration").style.transitionDuration = `0s`;
   document.getElementById("rankContainerDuration").style.width = "0%";
+  document.getElementById("rankAnimationOverlay").classList.remove("show");
+  document.getElementById("rankAnimation").style.height = "20vh";
+  document.getElementById("rankScreenContainer").classList.remove("show");
+  document.getElementById("rankAnimation").style.boxShadow = "0 0 30px rgba(0, 0, 0, 0.2)";
+  document.getElementById("rankAnimationOverlay").style.marginTop = "0vh";
   song.stop();
   initialize();
 };
