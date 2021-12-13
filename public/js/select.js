@@ -111,6 +111,7 @@ const socketInitialize = (id) => {
       }, 500);
       document.getElementById("randomContainerBackground").classList.add("show");
       setTimeout(() => {
+        document.getElementById("randomContainer").classList.add("zoomIn");
         durmroll.play();
         timerInterval = setInterval(roll, 50);
         setTimeout(() => {
@@ -121,6 +122,8 @@ const socketInitialize = (id) => {
           document.getElementsByClassName("randomContainerArrow")[2].classList.remove("show");
           document.getElementsByClassName("randomContainerArrow")[index].classList.add("show");
           document.getElementById("randomContainerBackground").style.backgroundImage = `url("${cdn}/albums/100/${file} (Custom).png")`;
+          document.getElementById("randomContainer").classList.remove("zoomIn");
+          document.getElementById("randomContainer").classList.add("zoomOut");
           symbals.play();
           const find = tracks.findIndex((obj) => obj.fileName == file);
           setTimeout(() => {
@@ -131,6 +134,8 @@ const socketInitialize = (id) => {
             document.getElementsByClassName("randomContainerTrackContainer")[index].classList.add("selected");
             document.getElementsByClassName("randomContainerTrackContainer")[index].style.left = `${index == 0 ? "25vw" : ""}`;
             document.getElementsByClassName("randomContainerTrackContainer")[index].style.right = `${index == 2 ? "25vw" : ""}`;
+            songs[find].volume(1);
+            Howler.volume(1);
             songs[find].play();
             socket.emit("select finish", userId);
           }, 1000);

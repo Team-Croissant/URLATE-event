@@ -675,11 +675,24 @@ p {
   background-color: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(20px);
   transition-duration: 1s;
+  transition-timing-function: linear;
+  transform: scale(1);
+}
+
+#randomContainer.zoomIn {
+  transition-duration: 3s;
+  transform: scale(1.1);
+}
+
+#randomContainer.zoomOut {
+  transition-duration: 0.3s;
+  transform: scale(1);
 }
 
 #randomContainerTitle {
+  z-index: 40;
   position: fixed;
-  top: 10vh;
+  top: 5vh;
   font-size: 4.5vh;
   color: black;
   font-weight: 800;
