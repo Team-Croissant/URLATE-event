@@ -92,6 +92,13 @@ let advanced = false;
 let preview;
 let filename = "";
 
+let selectSong = new Howl({
+  src: [`${cdn}/tracks/128kbps/store.mp3`],
+  format: ["mp3"],
+  autoplay: false,
+  loop: true,
+});
+
 let users = {};
 
 const mediaPlay = () => {
@@ -295,10 +302,10 @@ const socketInitialize = () => {
       autoplay: false,
       loop: true,
     });
-    // songs[songSelection].fade(1, 0, 500);
-    // setTimeout(() => {
-    //   songs[songSelection].stop();
-    // }, 500);
+    selectSong.fade(1, 0, 500);
+    setTimeout(() => {
+      selectSong.stop();
+    }, 500);
     setTimeout(() => {
       document.getElementById("randomContainer").classList.add("zoomIn");
       durmroll.play();
@@ -345,6 +352,7 @@ const timer = () => {
   if (new Date(dateArr[0]) <= d && timerStatus == 0) {
     timerStatus = 1;
     document.getElementById("randomContainerBackground").classList.add("show");
+    selectSong.play();
     //theme
   } else if (new Date(dateArr[1]) <= d && timerStatus == 1) {
     timerStatus = 2;
