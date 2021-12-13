@@ -125,11 +125,6 @@ const socketInitialize = () => {
     }
   });
 
-  socket.on("select started", (id) => {
-    users[id].ready = true;
-    refreshList("nickname", true, false, "track");
-  });
-
   socket.on("selecting", (id, track, producer, file) => {
     users[id].track = track;
     users[id].producer = producer;
@@ -146,19 +141,35 @@ const socketInitialize = () => {
     }
     if (isFinished) {
       let min = 0;
-      let max = Object.keys(users).length - 1;
+      let max = Object.keys(users).length;
       let result = Math.floor(Math.random() * (max - min)) + min;
+      let userNames = [];
       for (let i = 0; i < Object.keys(users).length; i++) {
         const target = Object.keys(users)[i];
+        userNames.push(users[target].nickname);
         users[target].selected = true;
         users[target].track = users[result + 1].track;
         users[target].producer = users[result + 1].producer;
         users[target].file = users[result + 1].file;
       }
+      display = 6;
+      buttons[0].textContent = "Start";
+      buttons[1].classList.add("hidden");
       clearInterval(timerInterval);
-      socket.emit("selected sync", users[result + 1].track, users[result + 1].producer, users[result + 1].file);
+      socket.emit("selected sync", userNames, users[result + 1].nickname, users[result + 1].track, users[result + 1].producer, users[result + 1].file);
       refreshList("nickname", true, false, "track");
     }
+  });
+
+  socket.on("select finish", (id) => {
+    users[id].ready = true;
+    refreshList("nickname", true, false, "track");
+    let isFinished = true;
+    for (let i = 0; i < Object.keys(users).length; i++) {
+      const target = Object.keys(users)[i];
+      if (!users[target].ready) isFinished = false;
+    }
+    if (isFinished) buttons[0].disabled = false;
   });
 
   socket.on("disconnected", (socketId) => {
@@ -284,6 +295,22 @@ const buttonClicked = () => {
       buttons[0].disabled = true;
       buttons[1].classList.add("hidden");
       refreshList("nickname", true, false, "track");
+      break;
+    case 6:
+      display = 7;
+      for (let i = 0; i < Object.keys(users).length; i++) {
+        const target = Object.keys(users)[i];
+        socket.emit("play", users[target]["socketId"]);
+        users[target].socketId = "";
+        users[target].loaded = false;
+        users[target].ready = false;
+        users[target].score = 0;
+        users[target].combo = 0;
+      }
+      socket.emit("play", "Display");
+      buttons[0].textContent = "Start";
+      buttons[0].disabled = true;
+      refreshList("nickname", true);
       break;
   }
 };

@@ -11,6 +11,20 @@ let availableTracks = [];
 let songSelection = -1;
 let difficultySelection = 0;
 
+const durmroll = new Howl({
+  src: [`/sounds/drumroll.mp3`],
+  format: ["mp3"],
+  autoplay: false,
+  loop: false,
+});
+
+const symbals = new Howl({
+  src: [`/sounds/symbals.mp3`],
+  format: ["mp3"],
+  autoplay: false,
+  loop: false,
+});
+
 const sortAsName = (a, b) => {
   if (a.name == b.name) return 0;
   return a.name > b.name ? 1 : -1;
@@ -81,10 +95,67 @@ const socketInitialize = (id) => {
       timerInterval = setInterval(timer, 100);
     });
 
+    socket.on("selecting", (id, track, producer, file) => {
+      document.getElementsByClassName("randomContainerTrack")[id - 1].textContent = track;
+      document.getElementsByClassName("randomContainerProducer")[id - 1].textContent = producer;
+      document.getElementsByClassName("randomContainerImage")[id - 1].style.backgroundImage = `url("${cdn}/albums/100/${file} (Custom).png")`;
+    });
+
+    socket.on("selected sync", (userNames, nickname, track, producer, file) => {
+      for (let i in userNames) {
+        document.getElementsByClassName("randomContainerName")[i].textContent = userNames[i];
+      }
+      songs[songSelection].fade(1, 0, 500);
+      setTimeout(() => {
+        songs[songSelection].stop();
+      }, 500);
+      document.getElementById("randomContainerBackground").classList.add("show");
+      setTimeout(() => {
+        durmroll.play();
+        timerInterval = setInterval(roll, 50);
+        setTimeout(() => {
+          let index = userNames.indexOf(nickname);
+          clearInterval(timerInterval);
+          document.getElementsByClassName("randomContainerArrow")[0].classList.remove("show");
+          document.getElementsByClassName("randomContainerArrow")[1].classList.remove("show");
+          document.getElementsByClassName("randomContainerArrow")[2].classList.remove("show");
+          document.getElementsByClassName("randomContainerArrow")[index].classList.add("show");
+          document.getElementById("randomContainerBackground").style.backgroundImage = `url("${cdn}/albums/100/${file} (Custom).png")`;
+          symbals.play();
+          const find = tracks.findIndex((obj) => obj.fileName == file);
+          setTimeout(() => {
+            document.getElementsByClassName("randomContainerTrackContainer")[0].classList.add("hide");
+            document.getElementsByClassName("randomContainerTrackContainer")[1].classList.add("hide");
+            document.getElementsByClassName("randomContainerTrackContainer")[2].classList.add("hide");
+            document.getElementsByClassName("randomContainerTrackContainer")[index].classList.remove("hide");
+            document.getElementsByClassName("randomContainerTrackContainer")[index].classList.add("selected");
+            document.getElementsByClassName("randomContainerTrackContainer")[index].style.left = `${index == 0 ? "25vw" : ""}`;
+            document.getElementsByClassName("randomContainerTrackContainer")[index].style.right = `${index == 2 ? "25vw" : ""}`;
+            songs[find].play();
+            socket.emit("select finish", userId);
+          }, 1000);
+        }, 3000);
+      }, 2000);
+    });
+
+    socket.on("play", () => {
+      window.location.href = `${url}/play?u=${userId}`;
+    });
+
     socket.on("admin disconnected", () => {
       window.location.href = `${url}/?u=${userId}`;
     });
   });
+};
+
+let rollN = 0;
+const roll = () => {
+  document.getElementsByClassName("randomContainerArrow")[0].classList.remove("show");
+  document.getElementsByClassName("randomContainerArrow")[1].classList.remove("show");
+  document.getElementsByClassName("randomContainerArrow")[2].classList.remove("show");
+  document.getElementsByClassName("randomContainerArrow")[rollN].classList.add("show");
+  rollN++;
+  if (rollN >= 3) rollN = 0;
 };
 
 const timer = () => {
@@ -278,7 +349,7 @@ const loadingHide = () => {
 document.onkeydown = (e) => {
   e = e || window.event;
   let key = e.key.toLowerCase();
-  if (timerStatus != 2) {
+  if (timerStatus == 1) {
     if (key == "arrowup") {
       e.preventDefault();
       if (songSelection != 0) {
