@@ -184,12 +184,12 @@ const socketInitialize = (id) => {
 
     socket.on("connected", () => {
       if (load == 2) {
-        socket.emit("tutorial loaded");
+        socket.emit("play loaded");
       }
       clearInterval(connectInterval);
     });
 
-    socket.on("tutorial start", (date) => {
+    socket.on("play start", (date) => {
       cntRender();
       document.getElementById("componentCanvas").style.opacity = "1";
       document.getElementById("loadingContainer").style.opacity = "0";
@@ -202,7 +202,7 @@ const socketInitialize = (id) => {
       timeout = new Date(date);
     });
 
-    socket.on("tutorial restart", () => {
+    socket.on("play restart", () => {
       location.reload();
     });
 
@@ -1179,7 +1179,7 @@ Pace.on("done", () => {
 });
 
 const doneLoading = () => {
-  socket.emit("tutorial loaded");
+  socket.emit("play loaded");
 };
 
 const songPlayPause = () => {

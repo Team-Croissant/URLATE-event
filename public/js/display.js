@@ -161,7 +161,7 @@ const socketInitialize = () => {
     initialize("tutorial");
   });
 
-  socket.on("tutorial start", (date) => {
+  socket.on("play start", (date) => {
     spectateInitialize(date);
   });
 
@@ -196,7 +196,7 @@ const socketInitialize = () => {
     }, 100);
   });
 
-  socket.on("tutorial restart", () => {
+  socket.on("play restart", () => {
     reset();
   });
 
@@ -264,7 +264,7 @@ const socketInitialize = () => {
       document.getElementsByClassName("randomContainerName")[i].textContent = users[target].nickname;
     }
     document.getElementById("spectateOverlay").classList.remove("show");
-    document.getElementById("rankAnimationOverlay").classList.remove("show");
+    document.getElementById("rankScreenContainer").classList.remove("show");
   });
 
   socket.on("select sync", (date, finDate) => {

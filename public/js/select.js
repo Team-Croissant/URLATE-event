@@ -102,6 +102,7 @@ const socketInitialize = (id) => {
     });
 
     socket.on("selected sync", (userNames, nickname, track, producer, file) => {
+      localStorage.file = file;
       for (let i in userNames) {
         document.getElementsByClassName("randomContainerName")[i].textContent = userNames[i];
       }

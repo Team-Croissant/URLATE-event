@@ -48,7 +48,7 @@ const socketInitialize = () => {
     }
   });
 
-  socket.on("tutorial loaded", (socketId) => {
+  socket.on("play loaded", (socketId) => {
     users[Object.keys(users).find((key) => users[key].socketId === socketId)].loaded = true;
     refreshList("nickname", true);
     let isFinished = true;
@@ -256,9 +256,9 @@ const buttonClicked = () => {
       date.setSeconds(date.getSeconds() + 5);
       for (let i = 0; i < Object.keys(users).length; i++) {
         const target = Object.keys(users)[i];
-        socket.emit("tutorial start", users[target]["socketId"], date);
+        socket.emit("play start", users[target]["socketId"], date);
       }
-      socket.emit("tutorial start", "Display", date);
+      socket.emit("play start", "Display", date);
       refreshList("nickname", true, true);
       buttons[0].textContent = "Restart";
       buttons[1].classList.add("hidden");
@@ -267,14 +267,14 @@ const buttonClicked = () => {
       display = 2;
       for (let i = 0; i < Object.keys(users).length; i++) {
         const target = Object.keys(users)[i];
-        socket.emit("tutorial restart", users[target]["socketId"]);
+        socket.emit("play restart", users[target]["socketId"]);
         users[target].socketId = "";
         users[target].loaded = false;
         users[target].ready = false;
         users[target].score = 0;
         users[target].combo = 0;
       }
-      socket.emit("tutorial restart", "Display");
+      socket.emit("play restart", "Display");
       buttons[0].textContent = "Start";
       buttons[0].disabled = true;
       buttons[1].textContent = "Skip";

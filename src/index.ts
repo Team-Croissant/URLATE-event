@@ -33,10 +33,11 @@ app.get("/display", (req, res) => {
 });
 
 app.get("/tutorial", (req, res) => {
-  res.render("tutorial", {
+  res.render("play", {
     url: config.project.url,
     game: config.project.game,
     cdn: config.project.cdn,
+    isTutorial: "true",
   });
 });
 
@@ -46,6 +47,15 @@ app.get("/select", (req, res) => {
     game: config.project.game,
     cdn: config.project.cdn,
     api: "https://dapi.rhyga.me",
+  });
+});
+
+app.get("/play", (req, res) => {
+  res.render("play", {
+    url: config.project.url,
+    game: config.project.game,
+    cdn: config.project.cdn,
+    isTutorial: "false",
   });
 });
 
