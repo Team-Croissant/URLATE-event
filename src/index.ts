@@ -40,6 +40,15 @@ app.get("/tutorial", (req, res) => {
   });
 });
 
+app.get("/select", (req, res) => {
+  res.render("select", {
+    url: config.project.url,
+    game: config.project.game,
+    cdn: config.project.cdn,
+    api: "https://dapi.rhyga.me",
+  });
+});
+
 app.listen(config.project.port, () => {
   console.log(`HTTP Server running at port ${config.project.port}.`);
 });

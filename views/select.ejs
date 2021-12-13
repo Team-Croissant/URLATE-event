@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/select.css">
+  <title>Select</title>
+</head>
+<body>
+    <div id="overlayContainer">
+        잠시만 기다려주세요..
+    </div>
+    <div id="selectContainer">
+        <div id="visualizer"><canvas id="renderer"></canvas></div>
+        <div id="selectBackground"></div>
+        <div id="selectContainerTopLeft">
+            <img src="/images/parts/elements/TRACKS.png" id="tracks">
+            <div id="tracksLine"></div>
+            <span class="tracksSelection selected" onclick="tracksToggle()">
+                <strong>Official</strong> Pattern
+            </span>
+        </div>
+        <div id="selectContainerTopRight">
+            <span id="selectTimeText">10</span>초
+        </div>
+        <div id="selectContainerLeft">
+            <div id="selectContainerTitle">
+                <div id="selectContainerTitleLeft">
+                    <span id="selectTitle"></span>
+                    <span id="selectArtist"></span>
+                </div>
+                <div id="selectContainerTitleRight">
+                    <span id="selectScore">SCORE</span>
+                    <span id="selectScoreValue"></span>
+                </div>
+            </div>
+            <div id="selectContainerAlbum">
+                <div id="selectContainerAlbumLeft">
+                    <div id="selectAlbumContainer">
+                        <img id="selectAlbum">
+                        <div id="starContainer">
+                            <span id="selectStars">★★★★★☆☆☆☆☆</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="selectContainerAlbumRight">
+                    <span id="trackStats">TRACK STATISTICS</span>
+                    <div class="trackStatContainer">
+                        <span>총알 밀도</span>
+                        <span id="bulletDensity">0</span>
+                    </div>
+                    <div class="trackStatLineContainer"><div class="trackStatLine" id="bulletDensityValue"></div></div>
+                    <div class="trackStatContainer">
+                        <span>노트 밀도</span>
+                        <span id="noteDensity">0</span>
+                    </div>
+                    <div class="trackStatLineContainer"><div class="trackStatLine" id="noteDensityValue"></div></div>
+                    <div class="trackStatContainer">
+                        <span>BPM</span>
+                        <span id="bpmText">0</span>
+                    </div>
+                    <div class="trackStatLineContainer"><div class="trackStatLine" id="bpmValue"></div></div>
+                    <div class="trackStatContainer">
+                        <span>속도</span>
+                        <span id="speed">0</span>
+                    </div>
+                    <div class="trackStatLineContainer"><div class="trackStatLine" id="speedValue"></div></div>
+                </div>
+            </div>
+            <div id="selectContainerInfo">
+                <div class="selectInfo">
+                    <div class="selectInfoTitleContainer">
+                        <span class="selectInfoTitle">DIFFICULTY</span>
+                    </div>
+                    <div class="selectInfoContentsContainer">
+                        <div class="difficulty"><span class="difficultyNumber">1</span><span class="difficultyText">EZ</span></div>
+                        <div class="difficulty"><span class="difficultyNumber">3</span><span class="difficultyText">MID</span></div>
+                        <div class="difficulty right"><span class="difficultyNumber">5</span><span class="difficultyText">HARD</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="selectContainerRight">
+            <div id="selectContainerRightTitles">
+                <span class="sortText selected" onclick="sortSelected(0)">제목순</span>
+                <span class="sortText" onclick="sortSelected(1)">프로듀서순</span>
+                <span class="sortText" onclick="sortSelected(2)">난이도순</span>
+                <span class="sortText" id="sortTextRight" onclick="sortSelected(3)">BPM순</span>
+                <div id="trackListLine"></div>
+                <span id="trackList">TRACK <strong>LIST</strong></span>
+            </div>
+            <div id="selectSongContainer"></div>
+        </div>
+    </div>
+    <img src="/images/parts/elements/loading.png" alt="loading" class="loadingCircle" id="loadingCircle">
+    <script>
+        const cdn = "<%= cdn %>";
+        const url = "<%= url %>";
+        const game = "<%= game %>";
+        const api = "<%= api %>";
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.7.5/lottie.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.1.2/howler.min.js"></script>
+    <script src="/js/playerModules.js"></script>
+    <script src="/js/select.js"></script>
+</body>
+</html>

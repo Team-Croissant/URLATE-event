@@ -2,6 +2,8 @@ const listContainer = document.getElementById("listContainer");
 const buttons = [document.getElementById("mainButton"), document.getElementById("subButton")];
 const users = {};
 let display = 0;
+let timerInterval;
+let finishDate;
 
 document.addEventListener("DOMContentLoaded", () => {
   socketInitialize();
@@ -23,6 +25,7 @@ const socketInitialize = () => {
           refreshList("socketId");
           break;
         case 2:
+        case 5:
           users[id].socketId = socketId;
           refreshList("nickname", true);
           break;
@@ -32,7 +35,6 @@ const socketInitialize = () => {
 
   socket.on("initialized", (name, socketId) => {
     if (display == 1) {
-      console.log(name, socketId);
       users[Object.keys(users).find((key) => users[key].socketId === socketId)].nickname = name;
       refreshList("nickname");
       let isFinished = true;
@@ -104,6 +106,61 @@ const socketInitialize = () => {
     }
   });
 
+  socket.on("select loaded", (id) => {
+    users[id].loaded = true;
+    refreshList("nickname", true, false, "track");
+    let isFinished = true;
+    for (let i = 0; i < Object.keys(users).length; i++) {
+      const target = Object.keys(users)[i];
+      if (!users[target].loaded) isFinished = false;
+    }
+    if (isFinished) {
+      let date = new Date();
+      date.setSeconds(date.getSeconds() + 3);
+      let finDate = new Date();
+      finDate.setSeconds(finDate.getSeconds() + 63);
+      socket.emit("select sync", date, finDate);
+      finishDate = finDate;
+      timerInterval = setInterval(timer, 500);
+    }
+  });
+
+  socket.on("select started", (id) => {
+    users[id].ready = true;
+    refreshList("nickname", true, false, "track");
+  });
+
+  socket.on("selecting", (id, track, producer, file) => {
+    users[id].track = track;
+    users[id].producer = producer;
+    users[id].file = file;
+    refreshList("nickname", true, false, "track");
+  });
+
+  socket.on("selected", (id) => {
+    users[id].selected = true;
+    let isFinished = true;
+    for (let i = 0; i < Object.keys(users).length; i++) {
+      const target = Object.keys(users)[i];
+      if (!users[target].selected) isFinished = false;
+    }
+    if (isFinished) {
+      let min = 0;
+      let max = Object.keys(users).length - 1;
+      let result = Math.floor(Math.random() * (max - min)) + min;
+      for (let i = 0; i < Object.keys(users).length; i++) {
+        const target = Object.keys(users)[i];
+        users[target].selected = true;
+        users[target].track = users[result + 1].track;
+        users[target].producer = users[result + 1].producer;
+        users[target].file = users[result + 1].file;
+      }
+      clearInterval(timerInterval);
+      socket.emit("selected sync", users[result + 1].track, users[result + 1].producer, users[result + 1].file);
+      refreshList("nickname", true, false, "track");
+    }
+  });
+
   socket.on("disconnected", (socketId) => {
     const index = Object.keys(users).find((key) => users[key].socketId === socketId);
     if (index) {
@@ -130,6 +187,14 @@ const socketInitialize = () => {
       }
     }
   });
+};
+
+const timer = () => {
+  if (finishDate <= new Date()) {
+    clearInterval(timerInterval);
+  } else {
+    buttons[0].textContent = `${parseInt((finishDate - new Date()) / 1000) + 1}..`;
+  }
 };
 
 const refreshList = (key, isOnline, isGame, subKey) => {
@@ -211,12 +276,14 @@ const buttonClicked = () => {
         socket.emit("select music", users[target]["socketId"]);
         users[target].socketId = "";
         users[target].loaded = false;
+        users[target].selected = false;
+        users[target].track = "waiting..";
       }
       socket.emit("select music", "Display");
       buttons[0].textContent = "wait..";
       buttons[0].disabled = true;
       buttons[1].classList.add("hidden");
-      refreshList("nickname", true);
+      refreshList("nickname", true, false, "track");
       break;
   }
 };
@@ -240,6 +307,7 @@ const subButtonClicked = () => {
         socket.emit("select music", users[target]["socketId"]);
         users[target].socketId = "";
         users[target].loaded = false;
+        users[target].track = "waiting..";
       }
       socket.emit("select music", "Display");
       buttons[0].textContent = "wait..";
