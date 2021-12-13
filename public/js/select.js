@@ -86,7 +86,7 @@ const socketInitialize = (id) => {
 
     socket.on("connected", () => {
       socket.emit("select loaded", id);
-      socket.emit("selecting", userId, tracks[songSelection].originalName, tracks[songSelection].producer, tracks[songSelection].fileName);
+      updateDetails(songSelection);
       clearInterval(connectInterval);
     });
 
@@ -319,10 +319,10 @@ const songSelected = (n, refreshed) => {
       updateDetails(n);
     });
   songSelection = n;
-  if (socket) socket.emit("selecting", userId, tracks[n].originalName, tracks[n].producer, tracks[n].fileName, noteDensities[0], bulletDensities[0], bpm, speeds[0]);
 };
 
 const updateDetails = (n) => {
+  if (socket) socket.emit("selecting", userId, tracks[n].originalName, tracks[n].producer, tracks[n].fileName, noteDensities[0], bulletDensities[0], bpm, speeds[0]);
   document.getElementById("bulletDensity").textContent = bulletDensities[difficultySelection];
   document.getElementById("bulletDensityValue").style.width = `${bulletDensities[difficultySelection]}%`;
   document.getElementById("noteDensity").textContent = noteDensities[difficultySelection];
