@@ -44,6 +44,23 @@ let resultEffect = new Howl({
 
 let timeout = 99999999999999999;
 let isGameStarted = false;
+let dateArr = [];
+let timeInterval;
+let timerStatus = 0;
+
+const durmroll = new Howl({
+  src: [`/sounds/drumroll.mp3`],
+  format: ["mp3"],
+  autoplay: false,
+  loop: false,
+});
+
+const symbals = new Howl({
+  src: [`/sounds/symbals.mp3`],
+  format: ["mp3"],
+  autoplay: false,
+  loop: false,
+});
 
 const canvasArr = document.getElementsByClassName("spectateCanvas");
 const colorOverlayContainer = document.getElementsByClassName("colorOverlayContainer");
@@ -240,6 +257,94 @@ const socketInitialize = () => {
       }, 2000);
     }, timeout);
   });
+
+  socket.on("select music", () => {
+    for (let i = 0; i < Object.keys(users).length; i++) {
+      const target = Object.keys(users)[i];
+      document.getElementsByClassName("randomContainerName")[i].textContent = users[target].nickname;
+    }
+    document.getElementById("spectateOverlay").classList.remove("show");
+    document.getElementById("rankAnimationOverlay").classList.remove("show");
+  });
+
+  socket.on("select sync", (date, finDate) => {
+    dateArr = [date, finDate];
+    timerInterval = setInterval(timer, 100);
+  });
+
+  socket.on("selecting", (id, track, producer, file) => {
+    document.getElementsByClassName("randomContainerTrack")[id - 1].textContent = track;
+    document.getElementsByClassName("randomContainerProducer")[id - 1].textContent = producer;
+    document.getElementsByClassName("randomContainerImage")[id - 1].style.backgroundImage = `url("${cdn}/albums/100/${file} (Custom).png")`;
+  });
+
+  socket.on("selected sync", (userNames, nickname, track, producer, file) => {
+    clearInterval(timerInterval);
+    document.getElementById("randomContainerSeconds").classList.add("hide");
+    document.getElementById("randomContainerTitle").textContent = "랜덤 추첨";
+    let preview = new Howl({
+      src: [`${cdn}/tracks/preview/${file}.mp3`],
+      format: ["mp3"],
+      autoplay: false,
+      loop: true,
+    });
+    // songs[songSelection].fade(1, 0, 500);
+    // setTimeout(() => {
+    //   songs[songSelection].stop();
+    // }, 500);
+    setTimeout(() => {
+      document.getElementById("randomContainer").classList.add("zoomIn");
+      durmroll.play();
+      timerInterval = setInterval(roll, 50);
+      setTimeout(() => {
+        let index = userNames.indexOf(nickname);
+        clearInterval(timerInterval);
+        document.getElementsByClassName("randomContainerArrow")[0].classList.remove("show");
+        document.getElementsByClassName("randomContainerArrow")[1].classList.remove("show");
+        document.getElementsByClassName("randomContainerArrow")[2].classList.remove("show");
+        document.getElementsByClassName("randomContainerArrow")[index].classList.add("show");
+        document.getElementById("randomContainerBackground").style.backgroundImage = `url("${cdn}/albums/100/${file} (Custom).png")`;
+        document.getElementById("randomContainer").classList.remove("zoomIn");
+        document.getElementById("randomContainer").classList.add("zoomOut");
+        symbals.play();
+        setTimeout(() => {
+          document.getElementsByClassName("randomContainerTrackContainer")[0].classList.add("hide");
+          document.getElementsByClassName("randomContainerTrackContainer")[1].classList.add("hide");
+          document.getElementsByClassName("randomContainerTrackContainer")[2].classList.add("hide");
+          document.getElementsByClassName("randomContainerTrackContainer")[index].classList.remove("hide");
+          document.getElementsByClassName("randomContainerTrackContainer")[index].classList.add("selected");
+          document.getElementsByClassName("randomContainerTrackContainer")[index].style.left = `${index == 0 ? "25vw" : ""}`;
+          document.getElementsByClassName("randomContainerTrackContainer")[index].style.right = `${index == 2 ? "25vw" : ""}`;
+          preview.volume(1);
+          preview.play();
+        }, 1000);
+      }, 3000);
+    }, 2000);
+  });
+};
+
+let rollN = 0;
+const roll = () => {
+  document.getElementsByClassName("randomContainerArrow")[0].classList.remove("show");
+  document.getElementsByClassName("randomContainerArrow")[1].classList.remove("show");
+  document.getElementsByClassName("randomContainerArrow")[2].classList.remove("show");
+  document.getElementsByClassName("randomContainerArrow")[rollN].classList.add("show");
+  rollN++;
+  if (rollN >= 3) rollN = 0;
+};
+
+const timer = () => {
+  let d = new Date();
+  if (new Date(dateArr[0]) <= d && timerStatus == 0) {
+    timerStatus = 1;
+    document.getElementById("randomContainerBackground").classList.add("show");
+    //theme
+  } else if (new Date(dateArr[1]) <= d && timerStatus == 1) {
+    timerStatus = 2;
+    clearInterval(timerInterval);
+    document.getElementById("randomContainerSeconds").classList.add("hide");
+  }
+  document.getElementById("randomContainerSecondsValue").textContent = parseInt((new Date(dateArr[1]) - new Date()) / 1000) + 1;
 };
 
 const reset = () => {

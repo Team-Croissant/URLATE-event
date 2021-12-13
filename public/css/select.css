@@ -685,7 +685,7 @@ p {
 }
 
 #randomContainer.zoomOut {
-  transition-duration: 0.3s;
+  transition-duration: 0.1s;
   transform: scale(1);
 }
 
