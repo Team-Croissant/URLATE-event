@@ -154,7 +154,6 @@ const tracksUpdate = () => {
 };
 
 const sortSelected = (n, isInitializing) => {
-  console.log("sort", n);
   Array.prototype.forEach.call(document.getElementsByClassName("sortText"), (e) => {
     if (e.classList.contains("selected")) e.classList.remove("selected");
   });
@@ -172,8 +171,10 @@ const sortSelected = (n, isInitializing) => {
 const songSelected = (n, refreshed) => {
   loadingShow();
   if (songSelection == n && !refreshed) {
+    timerStatus = 2;
     document.getElementById("overlayContainer").classList.remove("hide");
     socket.emit("selected", userId);
+    clearInterval(timerInterval);
     loadingHide();
     return;
   }
@@ -277,30 +278,32 @@ const loadingHide = () => {
 document.onkeydown = (e) => {
   e = e || window.event;
   let key = e.key.toLowerCase();
-  if (key == "arrowup") {
-    e.preventDefault();
-    if (songSelection != 0) {
-      let i = songSelection - 1;
-      while (tracks[i].type == 3 || JSON.parse(tracks[i].difficulty)[0] == 0) {
-        if (i == 0) return;
-        i--;
+  if (timerStatus != 2) {
+    if (key == "arrowup") {
+      e.preventDefault();
+      if (songSelection != 0) {
+        let i = songSelection - 1;
+        while (tracks[i].type == 3 || JSON.parse(tracks[i].difficulty)[0] == 0) {
+          if (i == 0) return;
+          i--;
+        }
+        console.log(i);
+        songSelected(i);
       }
-      console.log(i);
-      songSelected(i);
-    }
-  } else if (key == "arrowdown") {
-    e.preventDefault();
-    if (songSelection < tracks.length - 1) {
-      let i = songSelection + 1;
-      while (tracks[i].type == 3 || JSON.parse(tracks[i].difficulty)[0] == 0) {
-        i++;
-        if (i == tracks.length - 1) return;
+    } else if (key == "arrowdown") {
+      e.preventDefault();
+      if (songSelection < tracks.length - 1) {
+        let i = songSelection + 1;
+        while (tracks[i].type == 3 || JSON.parse(tracks[i].difficulty)[0] == 0) {
+          i++;
+          if (i == tracks.length - 1) return;
+        }
+        console.log(i);
+        songSelected(i);
       }
-      console.log(i);
-      songSelected(i);
+    } else if (key == "enter") {
+      e.preventDefault();
+      songSelected(songSelection);
     }
-  } else if (key == "enter") {
-    e.preventDefault();
-    songSelected(songSelection);
   }
 };
