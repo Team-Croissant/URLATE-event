@@ -293,14 +293,14 @@ const socketInitialize = () => {
 
   socket.on("selected sync", (userNames, nickname, track, producer, file, note, bullet, bpm, speed) => {
     fileName = file;
-    document.getElementByClassName("rankContainerInfoValue")[0].textContent = note;
-    document.getElementByClassName("rankContainerInfoValue")[1].textContent = bullet;
-    document.getElementByClassName("rankContainerInfoValue")[2].textContent = bpm;
-    document.getElementByClassName("rankContainerInfoValue")[3].textContent = speed;
-    document.getElementByClassName("rankContainerInfoValue")[4].textContent = note;
-    document.getElementByClassName("rankContainerInfoValue")[5].textContent = bullet;
-    document.getElementByClassName("rankContainerInfoValue")[6].textContent = bpm;
-    document.getElementByClassName("rankContainerInfoValue")[7].textContent = speed;
+    document.getElementsByClassName("rankContainerInfoValue")[0].textContent = note;
+    document.getElementsByClassName("rankContainerInfoValue")[1].textContent = bullet;
+    document.getElementsByClassName("rankContainerInfoValue")[2].textContent = bpm;
+    document.getElementsByClassName("rankContainerInfoValue")[3].textContent = speed;
+    document.getElementsByClassName("rankContainerInfoValue")[4].textContent = note;
+    document.getElementsByClassName("rankContainerInfoValue")[5].textContent = bullet;
+    document.getElementsByClassName("rankContainerInfoValue")[6].textContent = bpm;
+    document.getElementsByClassName("rankContainerInfoValue")[7].textContent = speed;
     clearInterval(timerInterval);
     document.getElementById("randomContainerSeconds").classList.add("hide");
     document.getElementById("randomContainerTitle").textContent = "랜덤 추첨";
