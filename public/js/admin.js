@@ -126,10 +126,14 @@ const socketInitialize = () => {
     }
   });
 
-  socket.on("selecting", (id, track, producer, file) => {
+  socket.on("selecting", (id, track, producer, file, note, bullet, bpm, speed) => {
     users[id].track = track;
     users[id].producer = producer;
     users[id].file = file;
+    users[id].note = note;
+    users[id].bullet = bullet;
+    users[id].bpm = bpm;
+    users[id].speed = speed;
     refreshList("nickname", true, false, "track");
   });
 
@@ -157,7 +161,18 @@ const socketInitialize = () => {
       buttons[0].textContent = "Start";
       buttons[1].classList.add("hidden");
       clearInterval(timerInterval);
-      socket.emit("selected sync", userNames, users[result + 1].nickname, users[result + 1].track, users[result + 1].producer, users[result + 1].file);
+      socket.emit(
+        "selected sync",
+        userNames,
+        users[result + 1].nickname,
+        users[result + 1].track,
+        users[result + 1].producer,
+        users[result + 1].file,
+        users[result + 1].note,
+        users[result + 1].bullet,
+        users[result + 1].bpm,
+        users[result + 1].speed
+      );
       refreshList("nickname", true, false, "track");
     }
   });

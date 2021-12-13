@@ -319,7 +319,7 @@ const songSelected = (n, refreshed) => {
       updateDetails(n);
     });
   songSelection = n;
-  if (socket) socket.emit("selecting", userId, tracks[n].originalName, tracks[n].producer, tracks[n].fileName);
+  if (socket) socket.emit("selecting", userId, tracks[n].originalName, tracks[n].producer, tracks[n].fileName, noteDensities[0], bulletDensities[0], bpm, speeds[0]);
 };
 
 const updateDetails = (n) => {
