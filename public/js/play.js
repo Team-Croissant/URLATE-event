@@ -157,6 +157,7 @@ let resultEffect = new Howl({
 });
 let advanced = false;
 let socket, userId, connectInterval;
+let timeGap = 0;
 
 document.addEventListener("DOMContentLoaded", () => {
   initialize(true);
@@ -190,6 +191,8 @@ const socketInitialize = (id) => {
     });
 
     socket.on("play start", (date) => {
+      timeGap = new Date();
+      socket.emit("time get");
       cntRender();
       document.getElementById("componentCanvas").style.opacity = "1";
       document.getElementById("loadingContainer").style.opacity = "0";
@@ -207,7 +210,7 @@ const socketInitialize = (id) => {
     });
 
     socket.on("result sync", (date) => {
-      const timeout = new Date(date) - new Date();
+      const timeout = new Date(date) - new Date() + timeGap;
       setTimeout(() => {
         document.getElementById("wallLeft").style.left = "-10vw";
         document.getElementById("wallRight").style.right = "-10vw";
@@ -232,6 +235,10 @@ const socketInitialize = (id) => {
 
     socket.on("select music", () => {
       window.location.href = `${url}/select?u=${userId}`;
+    });
+
+    socket.on("time", (time) => {
+      timeGap = timeGap - new Date(time);
     });
 
     socket.on("admin disconnected", () => {
@@ -803,11 +810,18 @@ const callBulletDestroy = (j) => {
 };
 
 const cntRender = () => {
-  if (timeout - new Date() <= 0 && !isGameStarted) {
+  eraseCnt();
+  let d = new Date();
+  if (timeout - d + timeGap <= 0 && !isGameStarted) {
     songPlayPause();
     isGameStarted = true;
+  } else {
+    ctx.font = `500 ${canvas.height / 50}px Metropolis, Pretendard Variable`;
+    ctx.fillStyle = "#F55";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    ctx.fillText(`timeGap : ${timeGap}, gap : ${timeout - d}, gap(보정됨) : ${timeout - d + timeGap}`, canvas.width / 2, canvas.height / 10);
   }
-  eraseCnt();
   if (window.devicePixelRatio != pixelRatio) {
     pixelRatio = window.devicePixelRatio;
     initialize(false);

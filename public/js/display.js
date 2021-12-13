@@ -91,6 +91,7 @@ let judgeSkin = false;
 let advanced = false;
 let preview;
 let fileName = "";
+let timeGap = 0;
 
 let selectSong = new Howl({
   src: [`${cdn}/tracks/128kbps/store.mp3`],
@@ -253,7 +254,7 @@ const socketInitialize = () => {
   });
 
   socket.on("result sync", (date) => {
-    const timeout = new Date(date) - new Date();
+    const timeout = new Date(date) - new Date() + timeGap;
     setTimeout(() => {
       resultEffect.play();
       document.getElementById("rankAnimationOverlay").classList.add("show");
@@ -335,13 +336,16 @@ const socketInitialize = () => {
           document.getElementsByClassName("randomContainerTrackContainer")[2].classList.add("hide");
           document.getElementsByClassName("randomContainerTrackContainer")[index].classList.remove("hide");
           document.getElementsByClassName("randomContainerTrackContainer")[index].classList.add("selected");
-          document.getElementsByClassName("randomContainerTrackContainer")[index].style.left = `${index == 0 ? "25vw" : ""}`;
-          document.getElementsByClassName("randomContainerTrackContainer")[index].style.right = `${index == 2 ? "25vw" : ""}`;
+          document.getElementsByClassName("randomContainerTrackContainer")[index].style.left = `${index == 0 ? "25vw" : "-25vw"}`;
           preview.volume(1);
           preview.play();
         }, 1000);
       }, 3000);
     }, 2000);
+  });
+
+  socket.on("time", (time) => {
+    timeGap = timeGap - new Date(time);
   });
 };
 
@@ -357,12 +361,12 @@ const roll = () => {
 
 const timer = () => {
   let d = new Date();
-  if (new Date(dateArr[0]) <= d && timerStatus == 0) {
+  if (new Date(dateArr[0]).getTime() + timeGap <= d && timerStatus == 0) {
     timerStatus = 1;
     document.getElementById("randomContainerBackground").classList.add("show");
     selectSong.play();
     //theme
-  } else if (new Date(dateArr[1]) <= d && timerStatus == 1) {
+  } else if (new Date(dateArr[1]).getTime() + timeGap <= d && timerStatus == 1) {
     timerStatus = 2;
     clearInterval(timerInterval);
     document.getElementById("randomContainerSeconds").classList.add("hide");
@@ -509,6 +513,8 @@ const eraseCnt = () => {
 };
 
 const spectateInitialize = (date) => {
+  timeGap = new Date();
+  socket.emit("time get");
   cntRender();
   document.getElementById("albumOverlay").classList.remove("show");
   timeout = new Date(date);
@@ -527,7 +533,7 @@ const songPlayPause = () => {
 };
 
 const cntRender = () => {
-  if (timeout - new Date() <= 0 && !isGameStarted) {
+  if (timeout - new Date() + timeGap <= 0 && !isGameStarted) {
     songPlayPause();
     isGameStarted = true;
   }

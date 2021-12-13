@@ -10,6 +10,7 @@ let songs = [];
 let availableTracks = [];
 let songSelection = -1;
 let difficultySelection = 0;
+let timeGap = 0;
 
 const durmroll = new Howl({
   src: [`/sounds/drumroll.mp3`],
@@ -76,6 +77,8 @@ document.addEventListener("DOMContentLoaded", () => {
 const socketInitialize = (id) => {
   userId = id;
   socket = io(game);
+  timeGap = new Date();
+  socket.emit("time get");
 
   socket.on("connect", () => {
     socket.on("broadcast", (id) => {
@@ -133,8 +136,7 @@ const socketInitialize = (id) => {
             document.getElementsByClassName("randomContainerTrackContainer")[2].classList.add("hide");
             document.getElementsByClassName("randomContainerTrackContainer")[index].classList.remove("hide");
             document.getElementsByClassName("randomContainerTrackContainer")[index].classList.add("selected");
-            document.getElementsByClassName("randomContainerTrackContainer")[index].style.left = `${index == 0 ? "25vw" : ""}`;
-            document.getElementsByClassName("randomContainerTrackContainer")[index].style.right = `${index == 2 ? "25vw" : ""}`;
+            document.getElementsByClassName("randomContainerTrackContainer")[index].style.left = `${index == 0 ? "25vw" : "-25vw"}`;
             songs[find].volume(1);
             Howler.volume(1);
             songs[find].play();
@@ -146,6 +148,10 @@ const socketInitialize = (id) => {
 
     socket.on("play", () => {
       window.location.href = `${url}/play?u=${userId}`;
+    });
+
+    socket.on("time", (time) => {
+      timeGap = timeGap - new Date(time);
     });
 
     socket.on("admin disconnected", () => {
@@ -166,12 +172,12 @@ const roll = () => {
 
 const timer = () => {
   let d = new Date();
-  if (new Date(dateArr[0]) <= d && timerStatus == 0) {
+  if (new Date(dateArr[0]).getTime() + timeGap <= d && timerStatus == 0) {
     timerStatus = 1;
     document.getElementById("overlayContainer").classList.add("hide");
     socket.emit("select started", userId);
     songs[songSelection].play();
-  } else if (new Date(dateArr[1]) <= d && timerStatus == 1) {
+  } else if (new Date(dateArr[1]).getTime() + timeGap <= d && timerStatus == 1) {
     timerStatus = 2;
     document.getElementById("overlayContainer").classList.remove("hide");
     socket.emit("selected", userId);

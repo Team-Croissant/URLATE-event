@@ -188,6 +188,10 @@ const socketInitialize = () => {
     if (isFinished) buttons[0].disabled = false;
   });
 
+  socket.on("time get", (socketId) => {
+    socket.emit("time", socketId, new Date());
+  });
+
   socket.on("disconnected", (socketId) => {
     const index = Object.keys(users).find((key) => users[key].socketId === socketId);
     if (index) {
