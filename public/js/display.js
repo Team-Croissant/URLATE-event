@@ -385,6 +385,12 @@ const reset = (track) => {
   scoreMs = [0, 0, 0];
   mouseX = [0, 0, 0];
   mouseY = [0, 0, 0];
+  for (let i = 0; i < Object.keys(users); i++) {
+    let target = Object.keys(users)[i];
+    users[target].score = 0;
+    users[target].judge = "";
+    users[target].rank = "";
+  }
   document.getElementById("rankContainerDuration").style.transitionDuration = `0s`;
   document.getElementById("rankContainerDuration").style.width = "0%";
   document.getElementById("rankAnimationOverlay").classList.remove("show");
