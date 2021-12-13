@@ -86,7 +86,7 @@ const socketInitialize = () => {
       if (!users[target].rank) isFinished = false;
     }
     if (isFinished) {
-      display = display == 2 ? 4 : 9;
+      display = display == 3 ? 4 : 9;
       let usersArr = [];
       for (let i = 0; i < Object.keys(users).length; i++) {
         usersArr.push(users[Object.keys(users)[i]]);
