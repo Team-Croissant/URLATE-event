@@ -89,6 +89,8 @@ let hide = {};
 let denySkin = false;
 let judgeSkin = false;
 let advanced = false;
+let preview;
+let filename = "";
 
 let users = {};
 
@@ -159,6 +161,10 @@ const socketInitialize = () => {
   socket.on("tutorial", (data) => {
     users = data;
     initialize("tutorial");
+  });
+
+  socket.on("play", () => {
+    initialize(fileName);
   });
 
   socket.on("play start", (date) => {
@@ -279,10 +285,11 @@ const socketInitialize = () => {
   });
 
   socket.on("selected sync", (userNames, nickname, track, producer, file) => {
+    fileName = file;
     clearInterval(timerInterval);
     document.getElementById("randomContainerSeconds").classList.add("hide");
     document.getElementById("randomContainerTitle").textContent = "랜덤 추첨";
-    let preview = new Howl({
+    preview = new Howl({
       src: [`${cdn}/tracks/preview/${file}.mp3`],
       format: ["mp3"],
       autoplay: false,
@@ -368,6 +375,12 @@ const reset = () => {
 };
 
 const initialize = (track) => {
+  if (preview) {
+    preview.fade(1, 0, 500);
+    setTimeout(() => {
+      preview.stop();
+    }, 500);
+  }
   rankContainer.innerHTML = "";
   for (let u in users) {
     rankContainer.innerHTML += `<div class="rankElements ${["", "", "second", "third"][u]}" id="user${u}">
@@ -383,6 +396,7 @@ const initialize = (track) => {
   }
   isGamePlaying = true;
   document.getElementById("urlateVideo").pause();
+  document.getElementById("randomContainerBackground").classList.remove("show");
   document.getElementById("urlateVideoContainer").classList.remove("show");
   document.getElementById("spectateOverlay").classList.add("show");
   document.getElementById("albumOverlay").classList.add("show");
@@ -397,6 +411,10 @@ const initialize = (track) => {
       bpm = pattern.information.bpm;
       speed = pattern.information.speed;
       patternLength = pattern.patterns.length;
+      document.getElementById("rankContainerTitle").textContent = pattern.information.track;
+      document.getElementById("rankContainerProducer").textContent = pattern.information.producer;
+      document.getElementById("rankScreenTrackTitle").textContent = pattern.information.track;
+      document.getElementById("rankScreenTrackProducer").textContent = pattern.information.producer;
       document.getElementById("albumOverlayTrack").textContent = pattern.information.track;
       document.getElementById("albumOverlayProducer").textContent = pattern.information.producer;
       document.getElementById("rankScreenTrack").style.backgroundImage = `url("${cdn}/albums/100/${track} (Custom).png")`;

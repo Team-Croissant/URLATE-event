@@ -26,6 +26,7 @@ const socketInitialize = () => {
           break;
         case 2:
         case 5:
+        case 7:
           users[id].socketId = socketId;
           refreshList("nickname", true);
           break;
@@ -85,7 +86,7 @@ const socketInitialize = () => {
       if (!users[target].rank) isFinished = false;
     }
     if (isFinished) {
-      display = 4;
+      display = display == 2 ? 4 : 9;
       let usersArr = [];
       for (let i = 0; i < Object.keys(users).length; i++) {
         usersArr.push(users[Object.keys(users)[i]]);
@@ -190,6 +191,7 @@ const socketInitialize = () => {
           refreshList("nickname");
           break;
         case 2:
+        case 7:
           refreshList("nickname", true);
           break;
         case 3:
@@ -251,7 +253,8 @@ const buttonClicked = () => {
       buttons[1].textContent = "Skip";
       break;
     case 2:
-      display = 3;
+    case 7:
+      display = display == 2 ? 3 : 8;
       let date = new Date();
       date.setSeconds(date.getSeconds() + 5);
       for (let i = 0; i < Object.keys(users).length; i++) {
@@ -312,6 +315,25 @@ const buttonClicked = () => {
       buttons[0].disabled = true;
       refreshList("nickname", true);
       break;
+    case 8:
+      display = 7;
+      for (let i = 0; i < Object.keys(users).length; i++) {
+        const target = Object.keys(users)[i];
+        socket.emit("play restart", users[target]["socketId"]);
+        users[target].socketId = "";
+        users[target].loaded = false;
+        users[target].ready = false;
+        users[target].score = 0;
+        users[target].combo = 0;
+      }
+      socket.emit("play restart", "Display");
+      buttons[0].textContent = "Start";
+      buttons[0].disabled = true;
+      buttons[1].textContent = "Skip";
+      refreshList("nickname", true);
+      break;
+    case 9:
+      location.reload();
   }
 };
 

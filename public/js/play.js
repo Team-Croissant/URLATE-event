@@ -242,12 +242,12 @@ const socketInitialize = (id) => {
 
 const tryConnect = () => {
   console.log("trying to connect");
-  socket.emit("handshake", userId, 2);
+  socket.emit("handshake", userId, isTutorial ? 2 : 7);
 };
 
 const initialize = (isFirstCalled) => {
   if (isFirstCalled) {
-    fetch(`${cdn}/URLATE-patterns/tutorial/0_ko.json`, {
+    fetch(`${cdn}/URLATE-patterns${isTutorial ? `/tutorial/0_ko.json` : `/${localStorage.file}/0.json`}`, {
       method: "GET",
       credentials: "include",
     })
@@ -315,11 +315,13 @@ const lottieSet = () => {
   switch (pattern.background.type) {
     case 0: //Image
       canvasBackground.getElementsByTagName("canvas")[0].style.display = "none";
-      canvasBackground.style.backgroundImage = `url("${cdn}/albums/${settings.display.albumRes}/tutorial (Custom).png")`;
+      if (isTutorial) canvasBackground.style.backgroundImage = `url("${cdn}/albums/${settings.display.albumRes}/tutorial (Custom).png")`;
+      else canvasBackground.style.backgroundImage = `url("${cdn}/albums/${settings.display.albumRes}/${file} (Custom).png")`;
       break;
     case 1: //Image & BGA
       canvasBackground.getElementsByTagName("canvas")[0].style.display = "initial";
-      canvasBackground.style.backgroundImage = `url("${cdn}/albums/${settings.display.albumRes}/tutorial (Custom).png")`;
+      if (isTutorial) canvasBackground.style.backgroundImage = `url("${cdn}/albums/${settings.display.albumRes}/tutorial (Custom).png")`;
+      else canvasBackground.style.backgroundImage = `url("${cdn}/albums/${settings.display.albumRes}/${file} (Custom).png")`;
       break;
     case 2: //BGA
       canvasBackground.getElementsByTagName("canvas")[0].style.display = "initial";
@@ -350,12 +352,19 @@ const settingApply = () => {
   for (let i = 0; i <= 1; i++) {
     document.getElementsByClassName("volumeMaster")[i].value = Math.round(settings.sound.volume.master * 100);
   }
-  document.getElementById("album").src = `${cdn}/albums/${settings.display.albumRes}/tutorial (Custom).png`;
-  document.getElementById("canvasBackground").style.backgroundImage = `url("${cdn}/albums/${settings.display.albumRes}/tutorial (Custom).png")`;
-  document.getElementById("scoreBackground").style.backgroundImage = `url("${cdn}/albums/${settings.display.albumRes}/tutorial (Custom).png")`;
-  document.getElementById("scoreAlbum").style.backgroundImage = `url("${cdn}/albums/${settings.display.albumRes}/tutorial (Custom).png")`;
+  if (isTutorial) {
+    document.getElementById("album").src = `${cdn}/albums/${settings.display.albumRes}/tutorial (Custom).png`;
+    document.getElementById("canvasBackground").style.backgroundImage = `url("${cdn}/albums/${settings.display.albumRes}/tutorial (Custom).png")`;
+    document.getElementById("scoreBackground").style.backgroundImage = `url("${cdn}/albums/${settings.display.albumRes}/tutorial (Custom).png")`;
+    document.getElementById("scoreAlbum").style.backgroundImage = `url("${cdn}/albums/${settings.display.albumRes}/tutorial (Custom).png")`;
+  } else {
+    document.getElementById("album").src = `${cdn}/albums/${settings.display.albumRes}/${localStorage.file} (Custom).png`;
+    document.getElementById("canvasBackground").style.backgroundImage = `url("${cdn}/albums/${settings.display.albumRes}/${localStorage.file} (Custom).png")`;
+    document.getElementById("scoreBackground").style.backgroundImage = `url("${cdn}/albums/${settings.display.albumRes}/${localStorage.file} (Custom).png")`;
+    document.getElementById("scoreAlbum").style.backgroundImage = `url("${cdn}/albums/${settings.display.albumRes}/${localStorage.file} (Custom).png")`;
+  }
   song = new Howl({
-    src: `${cdn}/tracks/192kbps/tutorial.mp3`,
+    src: `${cdn}/tracks/192kbps/${isTutorial ? `tutorial` : localStorage.file}.mp3`,
     format: ["mp3"],
     autoplay: false,
     loop: false,
