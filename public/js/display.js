@@ -90,7 +90,7 @@ let denySkin = false;
 let judgeSkin = false;
 let advanced = false;
 let preview;
-let filename = "";
+let fileName = "";
 
 let selectSong = new Howl({
   src: [`${cdn}/tracks/128kbps/store.mp3`],
@@ -171,7 +171,7 @@ const socketInitialize = () => {
   });
 
   socket.on("play", () => {
-    initialize(fileName);
+    reset(fileName);
   });
 
   socket.on("play start", (date) => {
@@ -210,7 +210,7 @@ const socketInitialize = () => {
   });
 
   socket.on("play restart", () => {
-    reset();
+    reset(fileName ? fileName : "tutorial");
   });
 
   socket.on("game ended", (id, score, rank, judge) => {
@@ -370,7 +370,7 @@ const timer = () => {
   document.getElementById("randomContainerSecondsValue").textContent = parseInt((new Date(dateArr[1]) - new Date()) / 1000) + 1;
 };
 
-const reset = () => {
+const reset = (track) => {
   timeout = 99999999999999999;
   isGameStarted = false;
   destroyedBullets = [new Set(), new Set(), new Set()];
@@ -379,6 +379,12 @@ const reset = () => {
   destroyParticles = [[], [], []];
   missParticles = [[], [], []];
   circleBulletAngles = [[], [], []];
+  displayScore = [0, 0, 0];
+  prevScore = [0, 0, 0];
+  score = [0, 0, 0];
+  scoreMs = [0, 0, 0];
+  mouseX = [0, 0, 0];
+  mouseY = [0, 0, 0];
   document.getElementById("rankContainerDuration").style.transitionDuration = `0s`;
   document.getElementById("rankContainerDuration").style.width = "0%";
   document.getElementById("rankAnimationOverlay").classList.remove("show");
@@ -387,7 +393,7 @@ const reset = () => {
   document.getElementById("rankAnimation").style.boxShadow = "0 0 30px rgba(0, 0, 0, 0.2)";
   document.getElementById("rankAnimationOverlay").style.marginTop = "0vh";
   song.stop();
-  initialize();
+  initialize(track);
 };
 
 const initialize = (track) => {
