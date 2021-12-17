@@ -371,8 +371,8 @@ const settingApply = () => {
     document.getElementById("scoreAlbum").style.backgroundImage = `url("${cdn}/albums/${settings.display.albumRes}/${localStorage.file} (Custom).png")`;
   }
   song = new Howl({
-    src: `${cdn}/tracks/192kbps/${isTutorial ? `tutorial` : localStorage.file}.mp3`,
-    format: ["mp3"],
+    src: `${cdn}/tracks/192kbps/${isTutorial ? `tutorial` : localStorage.file}.ogg`,
+    format: ["ogg"],
     autoplay: false,
     loop: false,
     onend: () => {

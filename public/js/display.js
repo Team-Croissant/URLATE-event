@@ -94,8 +94,8 @@ let fileName = "";
 let timeGap = 0;
 
 let selectSong = new Howl({
-  src: [`${cdn}/tracks/128kbps/store.mp3`],
-  format: ["mp3"],
+  src: [`${cdn}/tracks/128kbps/store.ogg`],
+  format: ["ogg"],
   autoplay: false,
   loop: true,
 });
@@ -306,8 +306,8 @@ const socketInitialize = () => {
     document.getElementById("randomContainerSeconds").classList.add("hide");
     document.getElementById("randomContainerTitle").textContent = "랜덤 추첨";
     preview = new Howl({
-      src: [`${cdn}/tracks/preview/${file}.mp3`],
-      format: ["mp3"],
+      src: [`${cdn}/tracks/preview/${file}.ogg`],
+      format: ["ogg"],
       autoplay: false,
       loop: true,
     });
@@ -457,8 +457,8 @@ const initialize = (track) => {
       document.getElementById("rankContainerRight").style.backgroundImage = `url("${cdn}/albums/100/${track} (Custom).png")`;
       document.getElementById("albumOverlayAlbum").src = `${cdn}/albums/100/${track} (Custom).png`;
       song = new Howl({
-        src: `${cdn}/tracks/192kbps/${track}.mp3`,
-        format: ["mp3"],
+        src: `${cdn}/tracks/192kbps/${track}.ogg`,
+        format: ["ogg"],
         autoplay: false,
         loop: false,
       });

@@ -207,8 +207,8 @@ const tracksUpdate = () => {
     }
     availableTracks.push(i);
     songs[i] = new Howl({
-      src: [`${cdn}/tracks/preview/${tracks[i].fileName}.mp3`],
-      format: ["mp3"],
+      src: [`${cdn}/tracks/preview/${tracks[i].fileName}.ogg`],
+      format: ["ogg"],
       autoplay: false,
       loop: true,
     });
