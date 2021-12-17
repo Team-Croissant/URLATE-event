@@ -698,3 +698,26 @@ body {
 .randomContainerArrow.show {
   opacity: 1;
 }
+
+.nameContainer {
+  position: absolute;
+  background-color: white;
+  color: black;
+  font-size: 3vh;
+  font-weight: 600;
+}
+
+.nameContainer.bottomRight {
+  right: 0;
+  bottom: 0;
+}
+
+.nameContainer.bottomLeft {
+  left: 0;
+  bottom: 0;
+}
+
+.nameContainer.topRight {
+  right: 0;
+  top: 0;
+}

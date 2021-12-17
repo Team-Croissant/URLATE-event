@@ -415,6 +415,7 @@ const initialize = (track) => {
   }
   rankContainer.innerHTML = "";
   for (let u in users) {
+    document.getElementsByClassName("nameContainer")[u - 1].textContent = users[u].nickname;
     rankContainer.innerHTML += `<div class="rankElements ${["", "", "second", "third"][u]}" id="user${u}">
                                   <div class="rankElementLeft">
                                     <span class="rankElementRank" id="rank${u}">#${u}</span>
