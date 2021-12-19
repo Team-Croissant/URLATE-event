@@ -91,7 +91,7 @@ let judgeSkin = false;
 let advanced = false;
 let preview;
 let fileName = "";
-let timeGap = 0;
+let timeGap = [];
 
 let selectSong = new Howl({
   src: [`${cdn}/tracks/128kbps/store.ogg`],
@@ -169,6 +169,8 @@ const socketInitialize = () => {
   socket.on("tutorial", (data) => {
     users = data;
     initialize("tutorial");
+    timeGap = [new Date()];
+    socket.emit("time get");
   });
 
   socket.on("play", () => {
@@ -345,7 +347,23 @@ const socketInitialize = () => {
   });
 
   socket.on("time", (time) => {
-    timeGap = timeGap - new Date(time);
+    time = new Date(time);
+    let d = new Date();
+    let len = timeGap.length;
+    let target = timeGap[len - 1];
+    timeGap[len - 1] = d - time >= 0 ? d - time - (d - target) / 2 : d - time + (d - target) / 2;
+    if (len >= 10) {
+      timeGap.sort((a, b) => a - b);
+      let start = 4;
+      let sum = 0;
+      for (let i = start; i < start + 3; i++) {
+        sum += timeGap[i];
+      }
+      timeGap = Math.round(sum / 3);
+    } else {
+      timeGap[len] = new Date();
+      socket.emit("time get");
+    }
   });
 };
 
@@ -514,8 +532,6 @@ const eraseCnt = () => {
 };
 
 const spectateInitialize = (date) => {
-  timeGap = new Date();
-  socket.emit("time get");
   cntRender();
   document.getElementById("albumOverlay").classList.remove("show");
   timeout = new Date(date);
@@ -535,7 +551,8 @@ const songPlayPause = () => {
 
 const cntRender = () => {
   if (timeout - new Date() + timeGap <= 0 && !isGameStarted) {
-    songPlayPause();
+    song.play();
+    menuAllowed = true;
     isGameStarted = true;
   }
   eraseCnt();

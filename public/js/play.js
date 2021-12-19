@@ -157,7 +157,7 @@ let resultEffect = new Howl({
 });
 let advanced = false;
 let socket, userId, connectInterval;
-let timeGap = 0;
+let timeGap = [];
 
 document.addEventListener("DOMContentLoaded", () => {
   initialize(true);
@@ -191,8 +191,6 @@ const socketInitialize = (id) => {
     });
 
     socket.on("play start", (date) => {
-      timeGap = new Date();
-      socket.emit("time get");
       cntRender();
       document.getElementById("componentCanvas").style.opacity = "1";
       document.getElementById("loadingContainer").style.opacity = "0";
@@ -238,7 +236,23 @@ const socketInitialize = (id) => {
     });
 
     socket.on("time", (time) => {
-      timeGap = timeGap - new Date(time);
+      time = new Date(time);
+      let d = new Date();
+      let len = timeGap.length;
+      let target = timeGap[len - 1];
+      timeGap[len - 1] = d - time >= 0 ? d - time - (d - target) / 2 : d - time + (d - target) / 2;
+      if (len >= 10) {
+        timeGap.sort((a, b) => a - b);
+        let start = 4;
+        let sum = 0;
+        for (let i = start; i < start + 3; i++) {
+          sum += timeGap[i];
+        }
+        timeGap = Math.round(sum / 3);
+      } else {
+        timeGap[len] = new Date();
+        socket.emit("time get");
+      }
     });
 
     socket.on("admin disconnected", () => {
@@ -290,6 +304,8 @@ const ready = () => {
   socket.emit("ready");
   document.getElementById("ready").classList.add("enabled");
   document.getElementById("ready").textContent = "I'm ready!";
+  timeGap = [new Date()];
+  socket.emit("time get");
 };
 
 const lottieLoad = (needToSeek) => {
@@ -813,14 +829,15 @@ const cntRender = () => {
   eraseCnt();
   let d = new Date();
   if (timeout - d + timeGap <= 0 && !isGameStarted) {
-    songPlayPause();
+    song.play();
+    menuAllowed = true;
     isGameStarted = true;
   } else {
-    ctx.font = `500 ${canvas.height / 50}px Metropolis, Pretendard Variable`;
+    ctx.font = `500 ${canvas.height / 40}px Metropolis, Pretendard Variable`;
     ctx.fillStyle = "#F55";
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
-    ctx.fillText(`timeGap : ${timeGap}, gap : ${timeout - d}, gap(보정됨) : ${timeout - d + timeGap}`, canvas.width / 2, canvas.height / 10);
+    ctx.fillText(`timeGap : ${timeGap}, gap(보정됨) : ${timeout - d + timeGap}, seek: ${Math.round(song.seek() * 1000)}`, canvas.width / 2, canvas.height / 10);
   }
   if (window.devicePixelRatio != pixelRatio) {
     pixelRatio = window.devicePixelRatio;

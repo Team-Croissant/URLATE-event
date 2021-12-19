@@ -10,7 +10,7 @@ let songs = [];
 let availableTracks = [];
 let songSelection = -1;
 let difficultySelection = 0;
-let timeGap = 0;
+let timeGap = [];
 
 const durmroll = new Howl({
   src: [`/sounds/drumroll.mp3`],
@@ -77,8 +77,6 @@ document.addEventListener("DOMContentLoaded", () => {
 const socketInitialize = (id) => {
   userId = id;
   socket = io(game);
-  timeGap = new Date();
-  socket.emit("time get");
 
   socket.on("connect", () => {
     socket.on("broadcast", (id) => {
@@ -91,6 +89,8 @@ const socketInitialize = (id) => {
       socket.emit("select loaded", id);
       updateDetails(songSelection);
       clearInterval(connectInterval);
+      timeGap = [new Date()];
+      socket.emit("time get");
     });
 
     socket.on("select sync", (date, finDate) => {
@@ -151,7 +151,23 @@ const socketInitialize = (id) => {
     });
 
     socket.on("time", (time) => {
-      timeGap = timeGap - new Date(time);
+      time = new Date(time);
+      let d = new Date();
+      let len = timeGap.length;
+      let target = timeGap[len - 1];
+      timeGap[len - 1] = d - time >= 0 ? d - time - (d - target) / 2 : d - time + (d - target) / 2;
+      if (len >= 10) {
+        timeGap.sort((a, b) => a - b);
+        let start = 4;
+        let sum = 0;
+        for (let i = start; i < start + 3; i++) {
+          sum += timeGap[i];
+        }
+        timeGap = Math.round(sum / 3);
+      } else {
+        timeGap[len] = new Date();
+        socket.emit("time get");
+      }
     });
 
     socket.on("admin disconnected", () => {
