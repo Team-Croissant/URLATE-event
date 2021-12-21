@@ -158,26 +158,22 @@ window.addEventListener("resize", lottieResize);
 const socketInitialize = () => {
   socket = io(game);
 
-  socket.on("connect", () => {
-    socket.emit("display");
-  });
-
   socket.on("admin disconnected", () => {
     location.reload();
   });
 
-  socket.on("tutorial", (data) => {
+  socket.on("tutorial display", (data) => {
     users = data;
     initialize("tutorial");
     timeGap = [new Date()];
     socket.emit("time get");
   });
 
-  socket.on("play", () => {
+  socket.on("play display", () => {
     reset(fileName);
   });
 
-  socket.on("play start", (date) => {
+  socket.on("play start display", (date) => {
     spectateInitialize(date);
   });
 
@@ -212,7 +208,7 @@ const socketInitialize = () => {
     }, 100);
   });
 
-  socket.on("play restart", () => {
+  socket.on("play restart display", () => {
     reset(fileName ? fileName : "tutorial");
   });
 
@@ -274,7 +270,7 @@ const socketInitialize = () => {
     }, timeout);
   });
 
-  socket.on("select music", () => {
+  socket.on("select music display", () => {
     for (let i = 0; i < Object.keys(users).length; i++) {
       const target = Object.keys(users)[i];
       document.getElementsByClassName("randomContainerName")[i].textContent = users[target].nickname;

@@ -201,7 +201,7 @@ body {
   transition-timing-function: linear;
   background-color: white;
   width: 0%;
-  height: 1vh;
+  height: 100%;
 }
 
 #rankContainerLeftInformation {
