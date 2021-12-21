@@ -240,7 +240,7 @@ const socketInitialize = (id) => {
       let d = new Date();
       let len = timeGap.length;
       let target = timeGap[len - 1];
-      timeGap[len - 1] = d - time >= 0 ? d - time - (d - target) / 2 : d - time + (d - target) / 2;
+      timeGap[len - 1] = target - time >= 0 ? target - time - (d - target) / 2 : target - time + (d - target) / 2;
       if (len >= 10) {
         timeGap.sort((a, b) => a - b);
         let start = 4;
@@ -832,12 +832,6 @@ const cntRender = () => {
     song.play();
     menuAllowed = true;
     isGameStarted = true;
-  } else {
-    ctx.font = `500 ${canvas.height / 40}px Metropolis, Pretendard Variable`;
-    ctx.fillStyle = "#F55";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "top";
-    ctx.fillText(`timeGap : ${timeGap}, gap(보정됨) : ${timeout - d + timeGap}, seek: ${Math.round(song.seek() * 1000)}`, canvas.width / 2, canvas.height / 10);
   }
   if (window.devicePixelRatio != pixelRatio) {
     pixelRatio = window.devicePixelRatio;

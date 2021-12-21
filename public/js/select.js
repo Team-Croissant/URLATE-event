@@ -155,7 +155,7 @@ const socketInitialize = (id) => {
       let d = new Date();
       let len = timeGap.length;
       let target = timeGap[len - 1];
-      timeGap[len - 1] = d - time >= 0 ? d - time - (d - target) / 2 : d - time + (d - target) / 2;
+      timeGap[len - 1] = target - time >= 0 ? target - time - (d - target) / 2 : target - time + (d - target) / 2;
       if (len >= 10) {
         timeGap.sort((a, b) => a - b);
         let start = 4;

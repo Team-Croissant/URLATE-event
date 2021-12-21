@@ -351,7 +351,7 @@ const socketInitialize = () => {
     let d = new Date();
     let len = timeGap.length;
     let target = timeGap[len - 1];
-    timeGap[len - 1] = d - time >= 0 ? d - time - (d - target) / 2 : d - time + (d - target) / 2;
+    timeGap[len - 1] = target - time >= 0 ? target - time - (d - target) / 2 : target - time + (d - target) / 2;
     if (len >= 10) {
       timeGap.sort((a, b) => a - b);
       let start = 4;
@@ -538,8 +538,6 @@ const spectateInitialize = (date) => {
 };
 
 const songPlayPause = () => {
-  document.getElementById("rankContainerDuration").style.transitionDuration = `${song.duration()}s`;
-  document.getElementById("rankContainerDuration").style.width = "100%";
   if (song.playing()) {
     song.pause();
     menuAllowed = false;
@@ -551,6 +549,8 @@ const songPlayPause = () => {
 
 const cntRender = () => {
   if (timeout - new Date() + timeGap <= 0 && !isGameStarted) {
+    document.getElementById("rankContainerDuration").style.transitionDuration = `${song.duration()}s`;
+    document.getElementById("rankContainerDuration").style.width = "100%";
     song.play();
     menuAllowed = true;
     isGameStarted = true;
