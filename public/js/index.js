@@ -68,6 +68,7 @@ const socketInitialize = (id) => {
     });
 
     socket.on("tutorial", () => {
+      localStorage.difficulty = 0;
       window.location.href = `${url}/tutorial?u=${userId}`;
     });
   });

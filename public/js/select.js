@@ -105,6 +105,16 @@ const socketInitialize = (id) => {
     });
 
     socket.on("selected sync", (userNames, nickname, track, producer, file) => {
+      difficulties = JSON.parse(tracks[tracks.findIndex((e) => e.fileName == file)].difficulty);
+      for (let i = 0; i <= 2; i++) {
+        document.getElementsByClassName("difficultyNumber")[i].textContent = difficulties[i];
+        document.getElementsByClassName("difficultySelectionNumber")[i].textContent = difficulties[i];
+      }
+      if (difficulties[difficultySelection] == 0) {
+        difficultySelected(0);
+      } else {
+        difficultySelected(difficultySelection);
+      }
       localStorage.file = file;
       for (let i in userNames) {
         document.getElementsByClassName("randomContainerName")[i].textContent = userNames[i];
@@ -136,7 +146,7 @@ const socketInitialize = (id) => {
             document.getElementsByClassName("randomContainerTrackContainer")[2].classList.add("hide");
             document.getElementsByClassName("randomContainerTrackContainer")[index].classList.remove("hide");
             document.getElementsByClassName("randomContainerTrackContainer")[index].classList.add("selected");
-            document.getElementsByClassName("randomContainerTrackContainer")[index].style.left = `${index == 0 ? "25vw" : "-25vw"}`;
+            document.getElementsByClassName("randomContainerTrackContainer")[index].style.left = `${index == 0 ? "25vw" : index == 1 ? "0vw" : "-25vw"}`;
             songs[find].volume(1);
             Howler.volume(1);
             songs[find].play();
@@ -307,10 +317,17 @@ const songSelected = (n, refreshed) => {
   document.getElementById("selectTitle").textContent = tracks[n].originalName;
   document.getElementById("selectArtist").textContent = tracks[n].producer;
   document.getElementById("selectAlbum").src = `${cdn}/albums/100/${tracks[n].fileName} (Custom).png`;
+  difficultySelection = 0;
   for (let i = 0; i <= 2; i++) {
-    if (JSON.parse(tracks[n].difficulty)[i] == 0) document.getElementsByClassName("difficulty")[i].classList.remove("difficultySelected");
-    else document.getElementsByClassName("difficulty")[i].classList.add("difficultySelected");
+    if (i != difficultySelection) {
+      document.getElementsByClassName("difficulty")[i].classList.remove("difficultySelected");
+      document.getElementsByClassName("difficultySelection")[i].classList.remove("selected");
+    } else {
+      document.getElementsByClassName("difficulty")[i].classList.add("difficultySelected");
+      document.getElementsByClassName("difficultySelection")[i].classList.add("selected");
+    }
     document.getElementsByClassName("difficultyNumber")[i].textContent = JSON.parse(tracks[n].difficulty)[i];
+    document.getElementsByClassName("difficultySelectionNumber")[i].textContent = JSON.parse(tracks[n].difficulty)[i];
   }
   document.getElementById("selectBackground").style.backgroundImage = `url("${cdn}/albums/100/${tracks[n].fileName} (Custom).png")`;
   setTimeout(
@@ -372,6 +389,18 @@ const loadingShow = () => {
 const loadingHide = () => {
   loadingCircle.style.pointerEvents = "none";
   loadingCircle.style.opacity = "0";
+};
+
+const difficultySelected = (n) => {
+  if (difficulties[n] != 0) {
+    document.getElementsByClassName("difficulty")[difficultySelection].classList.remove("difficultySelected");
+    document.getElementsByClassName("difficulty")[n].classList.add("difficultySelected");
+    document.getElementsByClassName("difficultySelection")[difficultySelection].classList.remove("selected");
+    document.getElementsByClassName("difficultySelection")[n].classList.add("selected");
+    difficultySelection = n;
+    localStorage.difficulty = difficultySelection;
+    socket.emit("difficulty select", userId, difficultySelection);
+  }
 };
 
 document.onkeydown = (e) => {

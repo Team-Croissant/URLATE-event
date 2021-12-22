@@ -33,6 +33,12 @@
                 <img src="/images/parts/icons/arrowup.svg" class="randomContainerArrow">
             </div>
         </div>
+        <div id="difficultySelectContainer">
+            <span id="difficultySelectionTitle">난이도 선택</span>
+            <div class="difficultySelection selected" onclick="difficultySelected(0)"><span class="difficultySelectionNumber">0</span><span class="difficultyText">EZ</span></div>
+            <div class="difficultySelection" onclick="difficultySelected(1)"><span class="difficultySelectionNumber">0</span><span class="difficultyText">MID</span></div>
+            <div class="difficultySelection" onclick="difficultySelected(2)"><span class="difficultySelectionNumber">0</span><span class="difficultyText">HARD</span></div>
+        </div>
     </div>
     <div id="overlayContainer">
         잠시만 기다려주세요..
@@ -100,9 +106,9 @@
                         <span class="selectInfoTitle">DIFFICULTY</span>
                     </div>
                     <div class="selectInfoContentsContainer">
-                        <div class="difficulty"><span class="difficultyNumber">1</span><span class="difficultyText">EZ</span></div>
-                        <div class="difficulty"><span class="difficultyNumber">3</span><span class="difficultyText">MID</span></div>
-                        <div class="difficulty right"><span class="difficultyNumber">5</span><span class="difficultyText">HARD</span></div>
+                        <div class="difficulty" onclick="difficultySelected(0)"><span class="difficultyNumber">1</span><span class="difficultyText">EZ</span></div>
+                        <div class="difficulty" onclick="difficultySelected(1)"><span class="difficultyNumber">3</span><span class="difficultyText">MID</span></div>
+                        <div class="difficulty right" onclick="difficultySelected(2)"><span class="difficultyNumber">5</span><span class="difficultyText">HARD</span></div>
                     </div>
                 </div>
             </div>

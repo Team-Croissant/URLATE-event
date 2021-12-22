@@ -755,3 +755,42 @@ p {
 .randomContainerArrow.show {
   opacity: 1;
 }
+
+#difficultySelectContainer {
+  transition-duration: 0.3s;
+  z-index: 100;
+  display: flex;
+  position: fixed;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border: 2px solid black;
+  padding: 1vh 1vw;
+  bottom: 5vh;
+  font-size: 2vh;
+}
+
+#difficultySelectionTitle {
+  font-weight: 800;
+  margin: 0vh 1vw;
+}
+
+.difficultySelection {
+  color: #777;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0vh 0.5vw;
+}
+
+.difficultySelection.selected {
+  color: black;
+  font-weight: 800;
+}
+
+.difficultySelection:hover {
+  color: #333;
+}

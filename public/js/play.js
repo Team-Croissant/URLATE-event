@@ -268,7 +268,7 @@ const tryConnect = () => {
 
 const initialize = (isFirstCalled) => {
   if (isFirstCalled) {
-    fetch(`${cdn}/URLATE-patterns${isTutorial ? `/tutorial/0_ko.json` : `/${localStorage.file}/0.json`}`, {
+    fetch(`${cdn}/URLATE-patterns${isTutorial ? `/tutorial/0_ko.json` : `/${localStorage.file}/${localStorage.difficulty}.json`}`, {
       method: "GET",
       credentials: "include",
     })
@@ -387,8 +387,7 @@ const settingApply = () => {
     document.getElementById("scoreAlbum").style.backgroundImage = `url("${cdn}/albums/${settings.display.albumRes}/${localStorage.file} (Custom).png")`;
   }
   song = new Howl({
-    src: `${cdn}/tracks/192kbps/${isTutorial ? `tutorial` : localStorage.file}.ogg`,
-    format: ["ogg"],
+    src: [`${cdn}/tracks/192kbps/${isTutorial ? `tutorial` : localStorage.file}.ogg`, `${cdn}/tracks_mp3/192kbps/${isTutorial ? `tutorial` : localStorage.file}.mp3`],
     autoplay: false,
     loop: false,
     onend: () => {

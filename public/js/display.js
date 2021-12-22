@@ -72,13 +72,18 @@ const rankScreenElementsContainer = document.getElementById("rankScreenElementsC
 
 let lottieAnim;
 let isGamePlaying = false;
-let pattern, patternLength, song, offset, bpm, speed;
+let pattern = [],
+  offsets = [],
+  bpms = [],
+  speeds = [];
+let song, offset, bpm, speed;
 let destroyedBullets = [new Set(), new Set(), new Set()],
   prevDestroyedBullets = [new Set(), new Set(), new Set()],
   destroyedNotes = [new Set(), new Set(), new Set()],
   destroyParticles = [[], [], []],
   missParticles = [[], [], []],
   circleBulletAngles = [[], [], []];
+let difficulties = [0, 0, 0];
 let displayScore = [0, 0, 0],
   prevScore = [0, 0, 0],
   score = [0, 0, 0],
@@ -94,8 +99,7 @@ let fileName = "";
 let timeGap = [];
 
 let selectSong = new Howl({
-  src: [`${cdn}/tracks/128kbps/store.ogg`],
-  format: ["ogg"],
+  src: [`${cdn}/tracks/128kbps/store.ogg`, `${cdn}/tracks_mp3/128kbps/store.mp3`],
   autoplay: false,
   loop: true,
 });
@@ -304,8 +308,7 @@ const socketInitialize = () => {
     document.getElementById("randomContainerSeconds").classList.add("hide");
     document.getElementById("randomContainerTitle").textContent = "랜덤 추첨";
     preview = new Howl({
-      src: [`${cdn}/tracks/preview/${file}.ogg`],
-      format: ["ogg"],
+      src: [`${cdn}/tracks/preview/${file}.ogg`, `${cdn}/tracks_mp3/preview/${file}.mp3`],
       autoplay: false,
       loop: true,
     });
@@ -334,12 +337,16 @@ const socketInitialize = () => {
           document.getElementsByClassName("randomContainerTrackContainer")[2].classList.add("hide");
           document.getElementsByClassName("randomContainerTrackContainer")[index].classList.remove("hide");
           document.getElementsByClassName("randomContainerTrackContainer")[index].classList.add("selected");
-          document.getElementsByClassName("randomContainerTrackContainer")[index].style.left = `${index == 0 ? "25vw" : "-25vw"}`;
+          document.getElementsByClassName("randomContainerTrackContainer")[index].style.left = `${index == 0 ? "25vw" : index == 1 ? "0vw" : "-25vw"}`;
           preview.volume(1);
           preview.play();
         }, 1000);
       }, 3000);
     }, 2000);
+  });
+
+  socket.on("difficulty select", (id, selection) => {
+    difficulties[id - 1] = selection;
   });
 
   socket.on("time", (time) => {
@@ -447,23 +454,34 @@ const initialize = (track) => {
   document.getElementById("urlateVideoContainer").classList.remove("show");
   document.getElementById("spectateOverlay").classList.add("show");
   document.getElementById("albumOverlay").classList.add("show");
-  fetch(`${cdn}/URLATE-patterns/${track}/0.json`, {
+  for (let i = 0; i < difficulties.length; i++) {
+    fetch(`${cdn}/URLATE-patterns/${track}/${difficulties[i]}.json`, {
+      method: "GET",
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        pattern[i] = data;
+        offsets[i] = data.information.offset;
+        bpms[i] = data.information.bpm;
+        speeds[i] = data.information.speed;
+      });
+  }
+  fetch(`${cdn}/URLATE-patterns/${track}/${Math.round(difficulties.reduce((a, b) => a + b) / 3)}.json`, {
     method: "GET",
     credentials: "include",
   })
     .then((res) => res.json())
     .then((data) => {
-      pattern = data;
-      offset = pattern.information.offset;
-      bpm = pattern.information.bpm;
-      speed = pattern.information.speed;
-      patternLength = pattern.patterns.length;
-      document.getElementById("rankContainerTitle").textContent = pattern.information.track;
-      document.getElementById("rankContainerProducer").textContent = pattern.information.producer;
-      document.getElementById("rankScreenTrackTitle").textContent = pattern.information.track;
-      document.getElementById("rankScreenTrackProducer").textContent = pattern.information.producer;
-      document.getElementById("albumOverlayTrack").textContent = pattern.information.track;
-      document.getElementById("albumOverlayProducer").textContent = pattern.information.producer;
+      offset = data.information.offset;
+      bpm = data.information.bpm;
+      speed = data.information.speed;
+      document.getElementById("rankContainerTitle").textContent = data.information.track;
+      document.getElementById("rankContainerProducer").textContent = data.information.producer;
+      document.getElementById("rankScreenTrackTitle").textContent = data.information.track;
+      document.getElementById("rankScreenTrackProducer").textContent = data.information.producer;
+      document.getElementById("albumOverlayTrack").textContent = data.information.track;
+      document.getElementById("albumOverlayProducer").textContent = data.information.producer;
       document.getElementById("rankScreenTrack").style.backgroundImage = `url("${cdn}/albums/100/${track} (Custom).png")`;
       document.getElementById("rankScreenTrackRight").style.backgroundImage = `url("${cdn}/albums/100/${track} (Custom).png")`;
       document.getElementById("spectateOverlay").style.backgroundImage = `url("${cdn}/albums/100/${track} (Custom).png")`;
@@ -471,8 +489,7 @@ const initialize = (track) => {
       document.getElementById("rankContainerRight").style.backgroundImage = `url("${cdn}/albums/100/${track} (Custom).png")`;
       document.getElementById("albumOverlayAlbum").src = `${cdn}/albums/100/${track} (Custom).png`;
       song = new Howl({
-        src: `${cdn}/tracks/192kbps/${track}.ogg`,
-        format: ["ogg"],
+        src: [`${cdn}/tracks/192kbps/${track}.ogg`, `${cdn}/tracks_mp3/192kbps/${track}.mp3`],
         autoplay: false,
         loop: false,
       });
@@ -556,29 +573,29 @@ const cntRender = () => {
     const canvas = canvasArr[k];
     const ctx = canvas.getContext("2d");
     ctx.lineWidth = 5;
-    const seek = song.seek() - offset / 1000;
-    let start = lowerBound(pattern.triggers, 0);
-    let end = upperBound(pattern.triggers, seek * 1000 + 2); //2 for floating point miss
-    const renderTriggers = pattern.triggers.slice(start, end);
+    const seek = song.seek() - offsets[k] / 1000;
+    let start = lowerBound(pattern[k].triggers, 0);
+    let end = upperBound(pattern[k].triggers, seek * 1000 + 2); //2 for floating point miss
+    const renderTriggers = pattern[k].triggers.slice(start, end);
     for (let i = 0; i < renderTriggers.length; i++) {
       if (renderTriggers[i].value == 0) {
         if (!destroyedBullets[k].has(renderTriggers[i].num)) {
           callBulletDestroy(renderTriggers[i].num, k);
         }
       } else if (renderTriggers[i].value == 1) {
-        end = upperBound(pattern.bullets, renderTriggers[i].ms);
-        const renderBullets = pattern.bullets.slice(0, end);
+        end = upperBound(pattern[k].bullets, renderTriggers[i].ms);
+        const renderBullets = pattern[k].bullets.slice(0, end);
         for (let j = 0; renderBullets.length > j; j++) {
           if (!destroyedBullets[k].has(j)) {
             callBulletDestroy(j, k);
           }
         }
       } else if (renderTriggers[i].value == 2) {
-        bpm = renderTriggers[i].bpm;
+        bpms[k] = renderTriggers[i].bpm;
       } else if (renderTriggers[i].value == 3) {
         canvas.style.filter = `opacity(${renderTriggers[i].opacity * 100}%)`;
       } else if (renderTriggers[i].value == 4) {
-        speed = renderTriggers[i].speed;
+        speeds[k] = renderTriggers[i].speed;
       } else if (renderTriggers[i].value == 5) {
         if (renderTriggers[i].ms - 1 <= seek * 1000 && renderTriggers[i].ms + renderTriggers[i].time > seek * 1000) {
           ctx.beginPath();
@@ -600,19 +617,19 @@ const cntRender = () => {
       }
     }
     prevDestroyedBullets[k] = new Set(destroyedBullets[k]);
-    start = lowerBound(pattern.patterns, seek * 1000 - (bpm * 4) / speed);
-    end = upperBound(pattern.patterns, seek * 1000 + (bpm * 14) / speed);
-    const renderNotes = pattern.patterns.slice(start, end);
+    start = lowerBound(pattern[k].patterns, seek * 1000 - (bpms[k] * 4) / speeds[k]);
+    end = upperBound(pattern[k].patterns, seek * 1000 + (bpms[k] * 14) / speeds[k]);
+    const renderNotes = pattern[k].patterns.slice(start, end);
     for (let i = renderNotes.length - 1; i >= 0; i--) {
-      const p = (((bpm * 14) / speed - (renderNotes[i].ms - seek * 1000)) / ((bpm * 14) / speed)) * 100;
+      const p = (((bpms[k] * 14) / speeds[k] - (renderNotes[i].ms - seek * 1000)) / ((bpms[k] * 14) / speeds[k])) * 100;
       drawNote(p, renderNotes[i].x, renderNotes[i].y, renderNotes[i].value, renderNotes[i].direction, k);
     }
-    start = lowerBound(pattern.bullets, seek * 1000 - bpm * 100);
-    end = upperBound(pattern.bullets, seek * 1000);
-    const renderBullets = pattern.bullets.slice(start, end);
+    start = lowerBound(pattern[k].bullets, seek * 1000 - bpms[k] * 100);
+    end = upperBound(pattern[k].bullets, seek * 1000);
+    const renderBullets = pattern[k].bullets.slice(start, end);
     for (let i = 0; i < renderBullets.length; i++) {
       if (!destroyedBullets[k].has(start + i)) {
-        const p = ((seek * 1000 - renderBullets[i].ms) / ((bpm * 40) / speed / renderBullets[i].speed)) * 100;
+        const p = ((seek * 1000 - renderBullets[i].ms) / ((bpms[k] * 40) / speeds[k] / renderBullets[i].speed)) * 100;
         const left = renderBullets[i].direction == "L";
         let x = (left ? -1 : 1) * (100 - p);
         let y = 0;
@@ -646,15 +663,15 @@ const cntRender = () => {
 };
 
 const callBulletDestroy = (j, k) => {
-  const seek = song.seek() - offset / 1000;
-  const p = ((seek * 1000 - pattern.bullets[j].ms) / ((bpm * 40) / speed / pattern.bullets[j].speed)) * 100;
-  const left = pattern.bullets[j].direction == "L";
+  const seek = song.seek() - offsets[k] / 1000;
+  const p = ((seek * 1000 - pattern[k].bullets[j].ms) / ((bpms[k] * 40) / speeds[k] / pattern[k].bullets[j].speed)) * 100;
+  const left = pattern[k].bullets[j].direction == "L";
   let x = (left ? -1 : 1) * (100 - p);
   let y = 0;
-  if (pattern.bullets[j].value == 0) {
-    y = pattern.bullets[j].location + p * getTan(pattern.bullets[j].angle) * (left ? 1 : -1);
+  if (pattern[k].bullets[j].value == 0) {
+    y = pattern[k].bullets[j].location + p * getTan(pattern[k].bullets[j].angle) * (left ? 1 : -1);
   } else {
-    if (!circleBulletAngles[k][j]) circleBulletAngles[k][j] = calcAngleDegrees((left ? -100 : 100) - mouseX[k], pattern.bullets[j].location - mouseY[k]);
+    if (!circleBulletAngles[k][j]) circleBulletAngles[k][j] = calcAngleDegrees((left ? -100 : 100) - mouseX[k], pattern[k].bullets[j].location - mouseY[k]);
     if (left) {
       if (110 > circleBulletAngles[k][j] && circleBulletAngles[k][j] > 0) circleBulletAngles[k][j] = 110;
       else if (0 > circleBulletAngles[k][j] && circleBulletAngles[k][j] > -110) circleBulletAngles[k][j] = -110;
@@ -662,7 +679,7 @@ const callBulletDestroy = (j, k) => {
       if (70 < circleBulletAngles[k][j] && circleBulletAngles[k][j] > 0) circleBulletAngles[k][j] = 70;
       else if (0 > circleBulletAngles[k][j] && circleBulletAngles[k][j] < -70) circleBulletAngles[k][j] = -70;
     }
-    y = pattern.bullets[j].location + p * getTan(circleBulletAngles[k][j]) * (left ? 1 : -1);
+    y = pattern[k].bullets[j].location + p * getTan(circleBulletAngles[k][j]) * (left ? 1 : -1);
   }
   let randomDirection = [];
   for (let i = 0; i < 3; i++) {
